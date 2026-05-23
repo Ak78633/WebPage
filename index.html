@@ -1,0 +1,2314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nordblock — Local AI Infrastructure</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <style>
+    *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+    :root{
+      --bg-primary:#06080f;
+      --bg-secondary:#0a0e1a;
+      --bg-card:#0d1220;
+      --bg-card-hover:#111828;
+      --accent:#00d4ff;
+      --accent2:#7b61ff;
+      --accent3:#00ff88;
+      --text-primary:#e8ecf4;
+      --text-secondary:#8892a8;
+      --text-muted:#4a5568;
+      --border:rgba(0,212,255,0.08);
+      --glow:rgba(0,212,255,0.15);
+      --glow2:rgba(123,97,255,0.15);
+      --radius:12px;
+      --radius-lg:20px;
+    }
+    html{scroll-behavior:smooth;font-size:16px}
+    body{
+      font-family:'Inter',system-ui,-apple-system,sans-serif;
+      background:var(--bg-primary);
+      color:var(--text-primary);
+      line-height:1.6;
+      overflow-x:hidden;
+      -webkit-font-smoothing:antialiased;
+    }
+
+    /* ===== SCROLLBAR ===== */
+    ::-webkit-scrollbar{width:6px}
+    ::-webkit-scrollbar-track{background:var(--bg-primary)}
+    ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
+
+    /* ===== NAVIGATION ===== */
+    nav{
+      position:fixed;top:0;left:0;right:0;z-index:100;
+      padding:1rem 2rem;
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(6,8,15,0.8);
+      backdrop-filter:blur(20px);
+      border-bottom:1px solid var(--border);
+      transition:all 0.3s ease;
+    }
+    nav.scrolled{padding:0.6rem 2rem;background:rgba(6,8,15,0.95)}
+    .nav-logo{
+      font-size:1.5rem;font-weight:800;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      letter-spacing:-0.5px;
+    }
+    .nav-logo span{font-weight:400;opacity:0.7}
+    .nav-links{display:flex;gap:2rem;list-style:none}
+    .nav-links a{
+      color:var(--text-secondary);text-decoration:none;font-size:0.9rem;
+      font-weight:500;transition:color 0.3s;position:relative;
+    }
+    .nav-links a::after{
+      content:'';position:absolute;bottom:-4px;left:0;width:0;height:2px;
+      background:var(--accent);transition:width 0.3s;
+    }
+    .nav-links a:hover{color:var(--text-primary)}
+    .nav-links a:hover::after{width:100%}
+    .nav-cta{
+      padding:0.5rem 1.25rem;border-radius:8px;font-size:0.85rem;font-weight:600;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:var(--bg-primary);border:none;cursor:pointer;text-decoration:none;
+      transition:transform 0.3s,box-shadow 0.3s;
+    }
+    .nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow)}
+    .mobile-toggle{display:none;flex-direction:column;gap:5px;cursor:pointer;background:none;border:none;padding:4px}
+    .mobile-toggle span{width:24px;height:2px;background:var(--text-primary);transition:all 0.3s;border-radius:2px}
+
+    /* ===== HERO ===== */
+    .hero{
+      position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;
+      text-align:center;padding:8rem 2rem 4rem;overflow:hidden;
+    }
+    #particles-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+    .hero-glow{
+      position:absolute;width:600px;height:600px;border-radius:50%;
+      filter:blur(120px);opacity:0.3;pointer-events:none;z-index:0;
+    }
+    .hero-glow.glow1{top:-200px;left:-100px;background:var(--accent)}
+    .hero-glow.glow2{bottom:-200px;right:-100px;background:var(--accent2)}
+    .hero-content{position:relative;z-index:1;max-width:900px}
+    .hero-badge{
+      display:inline-flex;align-items:center;gap:0.5rem;
+      padding:0.4rem 1rem;border-radius:50px;
+      background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);
+      font-size:0.8rem;color:var(--accent);font-weight:500;margin-bottom:2rem;
+    }
+    .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent3);animation:pulse 2s infinite}
+    @keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+    .hero h1{
+      font-size:clamp(2.5rem,6vw,4.5rem);font-weight:900;line-height:1.1;
+      margin-bottom:1.5rem;letter-spacing:-2px;
+    }
+    .hero h1 .gradient{
+      background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 50%,var(--accent3) 100%);
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+      background-size:200% 200%;animation:gradient-shift 4s ease infinite;
+    }
+    @keyframes gradient-shift{0%,100%{background-position:0% 50%}50%{background-position:100% 50%}}
+    .hero p{
+      font-size:clamp(1rem,2vw,1.25rem);color:var(--text-secondary);
+      max-width:650px;margin:0 auto 2.5rem;line-height:1.8;
+    }
+    .hero-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
+    .btn-primary{
+      padding:0.9rem 2rem;border-radius:10px;font-size:1rem;font-weight:600;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:var(--bg-primary);border:none;cursor:pointer;
+      transition:transform 0.3s,box-shadow 0.3s;text-decoration:none;
+      display:inline-flex;align-items:center;gap:0.5rem;
+    }
+    .btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 40px var(--glow)}
+    .btn-secondary{
+      padding:0.9rem 2rem;border-radius:10px;font-size:1rem;font-weight:600;
+      background:transparent;color:var(--text-primary);
+      border:1px solid var(--border);cursor:pointer;
+      transition:all 0.3s;text-decoration:none;
+      display:inline-flex;align-items:center;gap:0.5rem;
+    }
+    .btn-secondary:hover{border-color:var(--accent);background:rgba(0,212,255,0.05)}
+
+    /* ===== SECTIONS ===== */
+    section{padding:6rem 2rem}
+    .container{max-width:1200px;margin:0 auto}
+    .section-label{
+      display:inline-flex;align-items:center;gap:0.5rem;
+      font-size:0.8rem;font-weight:600;color:var(--accent);
+      text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem;
+      font-family:'JetBrains Mono',monospace;
+    }
+    .section-label::before{content:'';width:20px;height:1px;background:var(--accent)}
+    .section-title{
+      font-size:clamp(2rem,4vw,3rem);font-weight:800;
+      letter-spacing:-1px;margin-bottom:1rem;
+    }
+    .section-desc{color:var(--text-secondary);font-size:1.1rem;max-width:600px;line-height:1.8}
+
+    /* ===== SERVICES ===== */
+    .services{background:var(--bg-secondary)}
+    .services-grid{
+      display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
+      gap:1.5rem;margin-top:3rem;
+    }
+    .service-card{
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);padding:2.5rem;
+      transition:all 0.4s ease;position:relative;overflow:hidden;
+    }
+    .service-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      opacity:0;transition:opacity 0.4s;
+    }
+    .service-card:hover{
+      border-color:rgba(0,212,255,0.2);
+      background:var(--bg-card-hover);
+      transform:translateY(-4px);
+      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    }
+    .service-card:hover::before{opacity:1}
+    .service-icon{
+      width:56px;height:56px;border-radius:14px;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.5rem;margin-bottom:1.5rem;
+      background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);
+    }
+    .service-card h3{font-size:1.3rem;font-weight:700;margin-bottom:0.75rem}
+    .service-card p{color:var(--text-secondary);font-size:0.95rem;line-height:1.7}
+    .service-tags{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem}
+    .service-tag{
+      padding:0.25rem 0.75rem;border-radius:50px;font-size:0.75rem;
+      background:rgba(0,212,255,0.06);color:var(--accent);
+      border:1px solid rgba(0,212,255,0.1);font-weight:500;
+    }
+
+    /* ===== DEPLOYMENT OPTIONS ===== */
+    .deploy-section{position:relative}
+    .deploy-grid{display:grid;grid-template-columns:1fr 1fr;gap:2rem;margin-top:3rem}
+    .deploy-card{
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);padding:3rem;position:relative;
+      overflow:hidden;transition:all 0.4s;
+    }
+    .deploy-card:hover{
+      border-color:rgba(0,212,255,0.2);
+      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    }
+    .deploy-card .deploy-icon{
+      font-size:2.5rem;margin-bottom:1.5rem;
+      display:block;
+    }
+    .deploy-card h3{font-size:1.4rem;font-weight:700;margin-bottom:0.75rem}
+    .deploy-card p{color:var(--text-secondary);line-height:1.7;margin-bottom:1.5rem}
+    .deploy-features{list-style:none;display:flex;flex-direction:column;gap:0.75rem}
+    .deploy-features li{
+      display:flex;align-items:flex-start;gap:0.75rem;
+      color:var(--text-secondary);font-size:0.9rem;
+    }
+    .deploy-features li::before{
+      content:'\2713';color:var(--accent3);font-weight:700;
+      flex-shrink:0;margin-top:1px;
+    }
+
+    /* ===== SECURITY ===== */
+    .security{background:var(--bg-secondary);position:relative}
+    .security-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1.5rem;margin-top:3rem}
+    .security-item{
+      text-align:center;padding:2.5rem 1.5rem;
+      border-radius:var(--radius-lg);
+      background:var(--bg-card);border:1px solid var(--border);
+      transition:all 0.4s;
+    }
+    .security-item:hover{
+      border-color:rgba(0,255,136,0.2);
+      transform:translateY(-4px);
+      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+    }
+    .security-icon{
+      font-size:2.5rem;margin-bottom:1.25rem;display:block;
+    }
+    .security-item h4{font-size:1.1rem;font-weight:700;margin-bottom:0.5rem}
+    .security-item p{color:var(--text-secondary);font-size:0.9rem;line-height:1.6}
+
+    /* ===== POWERED BY ===== */
+    .powered{
+      text-align:center;padding:4rem 2rem 3rem;
+      border-top:1px solid var(--border);
+      border-bottom:1px solid var(--border);
+    }
+    .powered-label{
+      font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;
+      letter-spacing:2px;font-weight:600;margin-bottom:2rem;
+      font-family:'JetBrains Mono',monospace;
+    }
+    .powered-logos{
+      display:flex;align-items:center;justify-content:center;
+      gap:4rem;flex-wrap:wrap;
+    }
+    .powered-logo{
+      font-size:1.5rem;font-weight:700;color:var(--text-muted);
+      transition:color 0.3s;letter-spacing:-0.5px;
+    }
+    .powered-logo:hover{color:var(--text-primary)}
+    .powered-logo span{
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+
+    /* ===== DEMO ===== */
+    .demo{text-align:center}
+    .demo-box{
+      max-width:800px;margin:3rem auto 0;
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);overflow:hidden;
+    }
+    .demo-header{
+      display:flex;align-items:center;gap:0.5rem;
+      padding:1rem 1.5rem;background:rgba(0,0,0,0.3);
+      border-bottom:1px solid var(--border);
+    }
+    .demo-dot{width:10px;height:10px;border-radius:50%}
+    .demo-dot:nth-child(1){background:#ff5f57}
+    .demo-dot:nth-child(2){background:#ffbd2e}
+    .demo-dot:nth-child(3){background:#28c840}
+    .demo-body{
+      padding:3rem 2rem;
+      font-family:'JetBrains Mono',monospace;
+      font-size:0.85rem;color:var(--text-secondary);
+      text-align:left;
+      min-height:300px;
+      display:flex;flex-direction:column;justify-content:center;
+    }
+    .demo-prompt{color:var(--accent);margin-bottom:0.5rem}
+    .demo-cmd{color:var(--text-primary);margin-bottom:0.25rem}
+    .demo-response{color:var(--accent3);margin-bottom:0.5rem}
+    .demo-cursor{
+      display:inline-block;width:8px;height:18px;background:var(--accent);
+      animation:blink 1s step-end infinite;vertical-align:text-bottom;
+    }
+    @keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+    .demo-footer{
+      padding:1.25rem 1.5rem;border-top:1px solid var(--border);
+      display:flex;justify-content:space-between;align-items:center;
+    }
+    .demo-footer span{font-size:0.8rem;color:var(--text-muted)}
+
+    /* ===== STATS ===== */
+    .stats{
+      display:grid;grid-template-columns:repeat(4,1fr);gap:2rem;
+      padding:4rem 0;border-top:1px solid var(--border);
+    }
+    .stat{text-align:center}
+    .stat-value{
+      font-size:clamp(2rem,4vw,3rem);font-weight:900;
+      background:linear-gradient(135deg,var(--accent),var(--accent3));
+      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+    }
+    .stat-label{color:var(--text-secondary);font-size:0.9rem;margin-top:0.25rem}
+
+    /* ===== CTA SECTION ===== */
+    .cta-section{
+      text-align:center;padding:8rem 2rem;position:relative;overflow:hidden;
+    }
+    .cta-section::before{
+      content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+      width:500px;height:500px;border-radius:50%;
+      background:radial-gradient(circle,rgba(0,212,255,0.08),transparent 70%);
+      pointer-events:none;
+    }
+    .cta-section h2{
+      font-size:clamp(2rem,4vw,3.5rem);font-weight:900;
+      letter-spacing:-1px;margin-bottom:1rem;
+    }
+    .cta-section p{color:var(--text-secondary);font-size:1.15rem;max-width:550px;margin:0 auto 2.5rem;line-height:1.8}
+
+    /* ===== CONTACT ===== */
+    .contact{background:var(--bg-secondary)}
+    .contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:3rem;margin-top:3rem}
+    .contact-info{display:flex;flex-direction:column;gap:2rem}
+    .contact-item{display:flex;gap:1rem;align-items:flex-start}
+    .contact-icon{
+      width:44px;height:44px;border-radius:10px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);
+      font-size:1.1rem;
+    }
+    .contact-item h4{font-size:0.95rem;font-weight:600;margin-bottom:0.25rem}
+    .contact-item p,.contact-item a{color:var(--text-secondary);font-size:0.9rem;text-decoration:none;transition:color 0.3s}
+    .contact-item a:hover{color:var(--accent)}
+    .contact-form{
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);padding:2.5rem;
+    }
+    .form-group{margin-bottom:1.25rem}
+    .form-group label{display:block;font-size:0.85rem;font-weight:500;margin-bottom:0.5rem;color:var(--text-secondary)}
+    .form-group input,.form-group textarea{
+      width:100%;padding:0.8rem 1rem;border-radius:8px;
+      background:var(--bg-primary);border:1px solid var(--border);
+      color:var(--text-primary);font-family:inherit;font-size:0.9rem;
+      transition:border-color 0.3s;outline:none;
+    }
+    .form-group input:focus,.form-group textarea:focus{border-color:var(--accent)}
+    .form-group textarea{resize:vertical;min-height:120px}
+    .form-submit{
+      width:100%;padding:0.9rem;border-radius:10px;font-size:1rem;font-weight:600;
+      background:linear-gradient(135deg,var(--accent),var(--accent2));
+      color:var(--bg-primary);border:none;cursor:pointer;
+      transition:transform 0.3s,box-shadow 0.3s;
+    }
+    .form-submit:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow)}
+
+    /* ===== FOOTER ===== */
+    footer{
+      padding:3rem 2rem;border-top:1px solid var(--border);
+      text-align:center;
+    }
+    .footer-content{max-width:1200px;margin:0 auto}
+    .footer-links{display:flex;justify-content:center;gap:2rem;margin-bottom:1.5rem;flex-wrap:wrap}
+    .footer-links a{color:var(--text-secondary);text-decoration:none;font-size:0.85rem;transition:color 0.3s}
+    .footer-links a:hover{color:var(--accent)}
+    .footer-copy{color:var(--text-muted);font-size:0.8rem}
+
+    /* ===== SCROLL REVEAL ===== */
+    .reveal{opacity:1;transform:translateY(0);transition:all 0.8s cubic-bezier(0.16,1,0.3,1)}
+    .reveal.animate{opacity:0;transform:translateY(30px)}
+    .reveal.visible{opacity:1;transform:translateY(0)}
+
+    /* ===== GRID BG PATTERN ===== */
+    .grid-bg{
+      position:absolute;top:0;left:0;width:100%;height:100%;
+      background-image:
+        linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);
+      background-size:60px 60px;
+      pointer-events:none;
+    }
+
+    /* ===== AI NOTICE ===== */
+    .ai-notice{
+      background:linear-gradient(90deg,rgba(0,255,136,0.08),rgba(0,212,255,0.08),rgba(123,97,255,0.08));
+      border-top:1px solid rgba(0,255,136,0.2);
+      border-bottom:1px solid rgba(0,255,136,0.2);
+      padding:1.5rem 2rem;
+    }
+    .ai-notice-content{
+      display:flex;align-items:center;gap:0.75rem;
+      font-size:0.85rem;color:var(--text-secondary);
+    }
+    .ai-notice-icon{font-size:1.25rem;flex-shrink:0}
+    .ai-notice-text strong{color:var(--accent3)}
+
+    /* ===== DEMO SELECTION ===== */
+    .demo-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
+    .demo-card{
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);padding:2.5rem 2rem;
+      text-align:center;cursor:pointer;transition:all 0.4s;
+      position:relative;overflow:hidden;
+    }
+    .demo-card::before{
+      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      opacity:0;transition:opacity 0.4s;
+    }
+    .demo-card:nth-child(1)::before{background:linear-gradient(90deg,var(--accent),var(--accent2))}
+    .demo-card:nth-child(2)::before{background:linear-gradient(90deg,var(--accent2),var(--accent3))}
+    .demo-card:nth-child(3)::before{background:linear-gradient(90deg,var(--accent3),var(--accent))}
+    .demo-card:hover{
+      border-color:rgba(0,212,255,0.2);
+      transform:translateY(-6px);
+      box-shadow:0 20px 60px rgba(0,0,0,0.4);
+    }
+    .demo-card:hover::before{opacity:1}
+    .demo-card-icon{font-size:3rem;margin-bottom:1.25rem;display:block}
+    .demo-card h3{font-size:1.15rem;font-weight:700;margin-bottom:0.5rem}
+    .demo-card p{color:var(--text-secondary);font-size:0.85rem;line-height:1.6}
+    .demo-card-arrow{
+      margin-top:1.25rem;display:inline-flex;align-items:center;gap:0.4rem;
+      color:var(--accent);font-size:0.85rem;font-weight:600;
+      transition:gap 0.3s;
+    }
+    .demo-card:hover .demo-card-arrow{gap:0.8rem}
+
+    /* ===== DEMO MODAL ===== */
+    .demo-modal{
+      display:none;position:fixed;top:0;left:0;right:0;bottom:0;
+      z-index:1000;background:rgba(0,0,0,0.9);
+      backdrop-filter:blur(10px);
+      flex-direction:column;
+    }
+    .demo-modal.active{display:flex}
+    .demo-modal-header{
+      display:flex;align-items:center;justify-content:space-between;
+      padding:1rem 2rem;border-bottom:1px solid var(--border);
+      background:rgba(6,8,15,0.95);
+    }
+    .demo-modal-title{font-size:1rem;font-weight:700;color:var(--text-primary)}
+    .demo-modal-close{
+      width:36px;height:36px;border-radius:8px;
+      background:rgba(255,255,255,0.05);border:1px solid var(--border);
+      color:var(--text-secondary);font-size:1.2rem;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all 0.3s;
+    }
+    .demo-modal-close:hover{background:rgba(255,60,60,0.15);border-color:rgba(255,60,60,0.3);color:#ff4444}
+    .demo-modal-body{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;overflow:auto}
+    .demo-canvas-container{
+      width:100%;max-width:900px;aspect-ratio:16/9;
+      background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius-lg);overflow:hidden;
+    }
+    .demo-canvas-container canvas{width:100%;height:100%;display:block}
+
+    /* ===== CLOTH DEMO ===== */
+    .cloth-hint{
+      position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);
+      color:var(--text-muted);font-size:0.75rem;font-family:'JetBrains Mono',monospace;
+      background:rgba(0,0,0,0.5);padding:0.4rem 1rem;border-radius:50px;
+    }
+
+    /* ===== DATA ANALYSIS DEMO ===== */
+    .analysis-container{width:100%;max-width:900px;padding:2rem}
+    .analysis-title{font-size:1.25rem;font-weight:700;margin-bottom:0.25rem}
+    .analysis-subtitle{color:var(--text-secondary);font-size:0.85rem;margin-bottom:2rem}
+    .analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
+    .chart-box{
+      background:var(--bg-primary);border:1px solid var(--border);
+      border-radius:var(--radius);padding:1.25rem;position:relative;
+    }
+    .chart-label{font-size:0.75rem;color:var(--text-muted);margin-bottom:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px}
+    .chart-canvas{width:100%;aspect-ratio:16/10;display:block;border-radius:4px}
+    .analysis-summary{
+      margin-top:1.5rem;background:var(--bg-card);border:1px solid var(--border);
+      border-radius:var(--radius);padding:1.5rem;
+    }
+    .analysis-summary h4{font-size:0.9rem;font-weight:700;margin-bottom:0.75rem;color:var(--accent)}
+    .summary-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .summary-row:last-child{border-bottom:none}
+    .summary-label{color:var(--text-secondary);font-size:0.85rem}
+    .summary-value{font-weight:600;font-size:0.85rem;font-family:'JetBrains Mono',monospace}
+    .summary-value.positive{color:var(--accent3)}
+    .summary-value.negative{color:#ff6b6b}
+    .chart-tooltip{
+      position:absolute;pointer-events:none;
+      background:rgba(6,8,15,0.95);border:1px solid var(--accent);
+      border-radius:6px;padding:0.4rem 0.7rem;
+      font-size:0.75rem;color:var(--text-primary);
+      font-family:'JetBrains Mono',monospace;
+      white-space:nowrap;z-index:10;
+      display:none;
+    }
+
+    /* ===== PRESENTATION DEMO ===== */
+    .presentation-container{width:100%;max-width:900px}
+    .slide-viewer{
+      background:#0a0e1a;border:1px solid var(--border);
+      border-radius:var(--radius);aspect-ratio:16/9;
+      position:relative;overflow:hidden;margin-bottom:1rem;
+    }
+    .slide{
+      position:absolute;top:0;left:0;width:100%;height:100%;
+      display:flex;flex-direction:column;align-items:center;justify-content:center;
+      padding:3rem;opacity:0;transition:opacity 0.6s ease;
+    }
+    .slide.active{opacity:1}
+    .slide h2{font-size:clamp(1.5rem,3vw,2.5rem);font-weight:800;margin-bottom:0.5rem;text-align:center}
+    .slide p{color:var(--text-secondary);font-size:clamp(0.8rem,1.5vw,1.1rem);text-align:center;max-width:600px}
+    .slide-element{position:absolute}
+    .slide-1{background:linear-gradient(135deg,#0a0e1a 0%,#0d1220 40%,#0a1628 100%)}
+    .slide-1 h2{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+    .slide-2{background:linear-gradient(135deg,#0a0e1a 0%,#0d1220 40%,#0a1628 100%)}
+    .slide-3{background:linear-gradient(135deg,#0a0e1a 0%,#0d1220 40%,#0a1628 100%)}
+    .slide-4{background:linear-gradient(135deg,#0a0e1a 0%,#0d1220 40%,#0a1628 100%)}
+    .slide-chart{width:80%;max-width:500px;height:200px}
+    .slide-stat-grid{display:flex;gap:2rem;margin-top:1.5rem}
+    .slide-stat{text-align:center}
+    .slide-stat-val{font-size:clamp(1.5rem,2.5vw,2.2rem);font-weight:800;color:var(--accent3)}
+    .slide-stat-lbl{font-size:clamp(0.6rem,1vw,0.8rem);color:var(--text-muted)}
+    .slide-progress{
+      position:absolute;bottom:0;left:0;right:0;height:3px;
+      background:rgba(255,255,255,0.05);
+    }
+    .slide-progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.4s}
+    .slide-nav{display:flex;justify-content:space-between;align-items:center}
+    .slide-dots{display:flex;gap:0.5rem}
+    .slide-dot{
+      width:10px;height:10px;border-radius:50%;
+      background:var(--border);cursor:pointer;transition:all 0.3s;
+    }
+    .slide-dot.active{background:var(--accent);transform:scale(1.3)}
+    .slide-nav-btn{
+      width:40px;height:40px;border-radius:8px;
+      background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);
+      color:var(--accent);font-size:1.1rem;cursor:pointer;
+      display:flex;align-items:center;justify-content:center;
+      transition:all 0.3s;
+    }
+    .slide-nav-btn:hover{background:rgba(0,212,255,0.15)}
+    .slide-counter{color:var(--text-muted);font-size:0.8rem;font-family:'JetBrains Mono',monospace}
+    .slide-decor-circle{
+      border-radius:50%;border:1px solid rgba(0,212,255,0.1);
+    }
+
+    /* ===== RESPONSIVE ===== */
+    @media(max-width:900px){
+      .deploy-grid,.contact-grid{grid-template-columns:1fr}
+      .stats{grid-template-columns:repeat(2,1fr)}
+      .demo-cards{grid-template-columns:1fr}
+      .nav-links{display:none}
+      .mobile-toggle{display:flex}
+    }
+    @media(max-width:600px){
+      section{padding:4rem 1.25rem}
+      .services-grid{grid-template-columns:1fr}
+      .stats{grid-template-columns:1fr 1fr;gap:1.5rem}
+      .ai-notice-content{flex-direction:column;text-align:center}
+      .analysis-grid{grid-template-columns:1fr}
+      .hero{padding:7rem 1.25rem 3rem}
+      .powered-logos{gap:2rem}
+      .demo-body{padding:2rem 1.25rem;font-size:0.75rem}
+    }
+  </style>
+</head>
+<body>
+
+<!-- ===== NAVIGATION ===== -->
+<nav id="navbar">
+  <div class="nav-logo">NORD<span>BLOCK</span></div>
+  <ul class="nav-links">
+    <li><a href="#services">Services</a></li>
+    <li><a href="#deployment">Deployment</a></li>
+    <li><a href="#security">Security</a></li>
+    <li><a href="#demo">Demo</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="#contact" class="nav-cta">Get Started</a>
+  <button class="mobile-toggle" onclick="document.querySelector('.nav-links').style.display=document.querySelector('.nav-links').style.display==='flex'?'none':'flex'" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+
+<!-- ===== HERO ===== -->
+<section class="hero" id="hero">
+  <canvas id="particles-canvas"></canvas>
+  <div class="hero-glow glow1"></div>
+  <div class="hero-glow glow2"></div>
+  <div class="hero-content">
+    <div class="hero-badge"><span class="dot"></span> New Service Launch</div>
+    <h1>Your Data. <span class="gradient">Your AI.</span> Completely Local.</h1>
+    <p>
+      Nordblock sets up enterprise-grade LLM hardware and local AI agents tailored for your business.
+      100% on-premise or at our facilities &mdash; your data never leaves the systems you control.
+    </p>
+    <div class="hero-buttons">
+      <a href="#services" class="btn-primary">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        Explore Services
+      </a>
+      <a href="#contact" class="btn-secondary">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+        Contact Us
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ===== POWERED BY ===== -->
+<div class="powered">
+  <div class="powered-label">Built on</div>
+  <div class="powered-logos">
+    <div class="powered-logo"><span>OpenCode</span></div>
+    <div class="powered-logo"><span>Oh My OpenAgent</span></div>
+  </div>
+</div>
+
+<!-- ===== SERVICES ===== -->
+<section class="services" id="services">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Services</div>
+      <h2 class="section-title">Enterprise AI Infrastructure, <span class="gradient">Fully Yours</span></h2>
+      <p class="section-desc">From hardware provisioning to model deployment, we handle everything so you can focus on what matters &mdash; your data and your AI.</p>
+    </div>
+    <div class="services-grid">
+      <div class="service-card reveal">
+        <div class="service-icon">&#9881;</div>
+        <h3>LLM Hardware Setup</h3>
+        <p>We procure, configure, and install purpose-built hardware optimized for running large language models at scale. Every component selected for maximum performance and reliability.</p>
+        <div class="service-tags">
+          <span class="service-tag">GPU Clusters</span>
+          <span class="service-tag">NVLink</span>
+          <span class="service-tag">Custom Config</span>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#129302;</div>
+        <h3>Local AI Agents</h3>
+        <p>Deploy intelligent AI agents that operate entirely within your infrastructure. Analyze documents, generate content, automate workflows &mdash; all locally, all securely.</p>
+        <div class="service-tags">
+          <span class="service-tag">Data Analysis</span>
+          <span class="service-tag">Content Generation</span>
+          <span class="service-tag">Automation</span>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#128736;</div>
+        <h3>On-Premise Deployment</h3>
+        <p>Full end-to-end deployment at your own facility. We handle the installation, configuration, and integration with your existing IT infrastructure and security policies.</p>
+        <div class="service-tags">
+          <span class="service-tag">Your Facility</span>
+          <span class="service-tag">Integration</span>
+          <span class="service-tag">Managed</span>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#9729;</div>
+        <h3>Nordblock Facility</h3>
+        <p>Run your AI workloads at Nordblock's secure, high-performance data center. Enterprise-grade infrastructure with the same data sovereignty guarantees as on-premise.</p>
+        <div class="service-tags">
+          <span class="service-tag">Our Data Center</span>
+          <span class="service-tag">24/7 Monitoring</span>
+          <span class="service-tag">Redundant</span>
+        </div>
+      </div>
+      <div class="service-card reveal">
+        <div class="service-icon">&#128218;</div>
+        <h3>On-Site Storage</h3>
+        <p>Keep your data stored physically within your own office. Your sensitive data never leaves your premises &mdash; the model runs, you decide where the data lives.</p>
+        <div class="service-tags">
+          <span class="service-tag">Your Servers</span>
+          <span class="service-tag">Zero Transfer</span>
+          <span class="service-tag">Full Control</span>
+        </div>
+     </div>
+       <div class="service-card reveal">
+        <div class="service-icon">&#128221;</div>
+        <h3>Managed Services</h3>
+        <p>Ongoing maintenance, model updates, hardware monitoring, and technical support. We keep your AI infrastructure running at peak performance so you can focus on results.</p>
+        <div class="service-tags">
+          <span class="service-tag">Updates</span>
+          <span class="service-tag">Monitoring</span>
+          <span class="service-tag">Support</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== AI NOTICE ===== -->
+<div class="ai-notice">
+  <div class="container">
+    <div class="ai-notice-content">
+      <span class="ai-notice-icon">&#9889;</span>
+      <span class="ai-notice-text"><strong>This entire webpage was generated 100% by Nordblock's local AI agents.</strong> Every section, line of code, and interactive demo was created autonomously on our own infrastructure &mdash; no external APIs, no cloud models, fully on-premise.</span>
+    </div>
+  </div>
+</div>
+
+<!-- ===== DEPLOYMENT OPTIONS ===== -->
+<section class="deploy-section" id="deployment">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Deployment</div>
+      <h2 class="section-title">Where Your AI Lives, <span class="gradient">You Decide</span></h2>
+      <p class="section-desc">Choose the deployment model that fits your compliance, performance, and data sovereignty requirements.</p>
+    </div>
+    <div class="deploy-grid">
+      <div class="deploy-card reveal">
+        <span class="deploy-icon">&#127970;</span>
+        <h3>On-Premise at Your Office</h3>
+        <p>Hardware installed directly at your business location. Your data stays in your building, on your network, fully isolated from external infrastructure.</p>
+        <ul class="deploy-features">
+          <li>Hardware installed and configured at your site</li>
+          <li>Complete network isolation</li>
+          <li>Storage stays on your premises</li>
+          <li>Full physical access control</li>
+          <li>Ongoing remote monitoring and support</li>
+        </ul>
+      </div>
+      <div class="deploy-card reveal">
+        <span class="deploy-icon">&#9878;</span>
+        <h3>At Nordblock's Facility</h3>
+        <p>Run your AI workloads at our hardened data center. Same local AI experience with enterprise-grade infrastructure, uptime guarantees, and professional management.</p>
+        <ul class="deploy-features">
+          <li>Enterprise-grade data center infrastructure</li>
+          <li>Redundant power and networking</li>
+          <li>Dedicated hardware allocation</li>
+          <li>24/7 physical and network security</li>
+          <li>Flexible scaling options</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== SECURITY ===== -->
+<section class="security" id="security">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Security</div>
+      <h2 class="section-title">Your Data Never Leaves <span class="gradient">Your Control</span></h2>
+      <p class="section-desc">Multi-layered security architecture designed for the most demanding compliance requirements.</p>
+    </div>
+    <div class="security-grid">
+      <div class="security-item reveal">
+        <span class="security-icon">&#128274;</span>
+        <h4>GDPR Compliant</h4>
+        <p>Fully compliant with EU General Data Protection Regulation. Your data rights and protections are built into every layer.</p>
+      </div>
+      <div class="security-item reveal">
+        <span class="security-icon">&#128272;</span>
+        <h4>100% Local Models</h4>
+        <p>All AI models run locally on your dedicated hardware. No data ever exits your controlled environment.</p>
+      </div>
+      <div class="security-item reveal">
+        <span class="security-icon">&#128187;</span>
+        <h4>Network Isolation</h4>
+        <p>Air-gapped or private network options. Your AI infrastructure operates independently from the public internet.</p>
+      </div>
+      <div class="security-item reveal">
+        <span class="security-icon">&#128100;</span>
+        <h4>Access Control</h4>
+        <p>Multi-factor authentication, role-based access, and comprehensive audit logging for every system interaction.</p>
+      </div>
+      <div class="security-item reveal">
+        <span class="security-icon">&#128204;</span>
+        <h4>Audit &amp; Compliance</h4>
+        <p>Detailed compliance reporting and audit trails. Meets industry standards for regulated sectors.</p>
+      </div>
+    </div>
+
+    <!-- STATS -->
+    <div class="stats reveal">
+      <div class="stat">
+        <div class="stat-value">100%</div>
+        <div class="stat-label">Local &amp; On-Premise</div>
+      </div>
+      <div class="stat">
+        <div class="stat-value">GDPR</div>
+        <div class="stat-label">Fully Compliant</div>
+      </div>
+       <div class="stat">
+        <div class="stat-value">0</div>
+        <div class="stat-label">Data Exfiltration Risk</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DEMO ===== -->
+<section class="demo" id="demo">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Live Demos</div>
+      <h2 class="section-title">See It in <span class="gradient">Action</span></h2>
+      <p class="section-desc">Three fully interactive demos generated by our local AI agents. Click any card to explore.</p>
+    </div>
+    <div class="demo-cards reveal">
+      <div class="demo-card" onclick="openDemo('cloth')">
+        <span class="demo-card-icon">&#128091;</span>
+        <h3>Cloth Physics</h3>
+        <p>Interactive Verlet-based fabric simulation. Click and drag to pull and tear the cloth.</p>
+        <span class="demo-card-arrow">Try Demo <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </div>
+      <div class="demo-card" onclick="openDemo('analysis')">
+        <span class="demo-card-icon">&#128202;</span>
+        <h3>Data Analysis</h3>
+        <p>Realistic quarterly business data analysis with interactive charts and automated insights.</p>
+        <span class="demo-card-arrow">Try Demo <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </div>
+      <div class="demo-card" onclick="openDemo('presentation')">
+        <span class="demo-card-icon">&#128202;</span>
+        <h3>Presentations</h3>
+        <p>Beautiful slide decks generated with smooth transitions, charts, and layouts.</p>
+        <span class="demo-card-arrow">Try Demo <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== DEMO MODALS ===== -->
+<div class="demo-modal" id="modal-cloth">
+  <div class="demo-modal-header">
+    <span class="demo-modal-title">&#128091; Cloth Physics Simulation</span>
+    <button class="demo-modal-close" onclick="closeDemo('cloth')">&times;</button>
+  </div>
+  <div class="demo-modal-body">
+    <div class="demo-canvas-container">
+      <canvas id="cloth-canvas"></canvas>
+      <div class="cloth-hint">Click &amp; drag to pull the cloth</div>
+    </div>
+  </div>
+</div>
+
+<div class="demo-modal" id="modal-analysis">
+  <div class="demo-modal-header">
+    <span class="demo-modal-title">&#128202; Business Data Analysis</span>
+    <button class="demo-modal-close" onclick="closeDemo('analysis')">&times;</button>
+  </div>
+  <div class="demo-modal-body">
+    <div class="analysis-container" id="analysis-container"></div>
+  </div>
+</div>
+
+<div class="demo-modal" id="modal-presentation">
+  <div class="demo-modal-header">
+    <span class="demo-modal-title">&#128202; AI-Generated Presentation</span>
+    <button class="demo-modal-close" onclick="closeDemo('presentation')">&times;</button>
+  </div>
+  <div class="demo-modal-body">
+    <div class="presentation-container" id="presentation-container"></div>
+  </div>
+</div>
+
+<!-- ===== CTA ===== -->
+<section class="cta-section">
+  <div class="container reveal">
+    <h2>Ready to Go <span class="gradient">Local</span>?</h2>
+    <p>Get in touch to discuss your AI infrastructure needs. We'll design a solution tailored to your data, your security, and your goals.</p>
+    <a href="#contact" class="btn-primary">
+      Get in Touch
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+    </a>
+  </div>
+</section>
+
+<!-- ===== CONTACT ===== -->
+<section class="contact" id="contact">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Contact</div>
+      <h2 class="section-title">Let's Build Your <span class="gradient">AI Infrastructure</span></h2>
+      <p class="section-desc">Reach out and we'll discuss how Nordblock can set up your local AI environment.</p>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info reveal">
+        <div class="contact-item">
+          <div class="contact-icon">&#9993;</div>
+          <div>
+            <h4>Email</h4>
+            <a href="mailto:info@nordblock.fi">info@nordblock.fi</a>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">&#128222;</div>
+          <div>
+            <h4>Phone</h4>
+            <a href="tel:+358401949729">+358 40 194 9729</a>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">&#128205;</div>
+          <div>
+            <h4>Office</h4>
+            <p>Friisinmäentie 5, 02600 Espoo, Finland</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">&#127760;</div>
+          <div>
+            <h4>Company</h4>
+            <p>Nordblock Oy | Business ID: 3230782-4</p>
+          </div>
+        </div>
+        <div class="contact-item">
+          <div class="contact-icon">&#9776;</div>
+          <div>
+            <h4>Follow Us</h4>
+            <p>
+              <a href="https://linkedin.com/company/nordblockfi" target="_blank" rel="noopener">LinkedIn</a> &nbsp;&#8226;&nbsp;
+              <a href="https://x.com/nordblock_fi" target="_blank" rel="noopener">X / Twitter</a>
+            </p>
+          </div>
+        </div>
+      </div>
+      <div class="contact-form reveal">
+        <form onsubmit="event.preventDefault();this.innerHTML='<div style=\'text-align:center;padding:3rem 0;\'><div style=\'font-size:2rem;margin-bottom:1rem;\'>&#10003;</div><h3 style=\'margin-bottom:0.5rem;\'>Message Sent</h3><p style=\'color:var(--text-secondary)\'>We\'ll get back to you within 24 hours.</div>'">
+          <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" id="name" placeholder="Your full name" required>
+          </div>
+          <div class="form-group">
+            <label for="email">Email</label>
+            <input type="email" id="email" placeholder="your@company.com" required>
+          </div>
+          <div class="form-group">
+            <label for="company">Company</label>
+            <input type="text" id="company" placeholder="Your company name">
+          </div>
+          <div class="form-group">
+            <label for="message">Message</label>
+            <textarea id="message" placeholder="Tell us about your AI infrastructure needs..." required></textarea>
+          </div>
+          <button type="submit" class="form-submit">Send Message</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== FOOTER ===== -->
+<footer>
+  <div class="footer-content">
+    <div class="footer-links">
+      <a href="#services">Services</a>
+      <a href="#deployment">Deployment</a>
+      <a href="#security">Security</a>
+      <a href="#demo">Demo</a>
+      <a href="#contact">Contact</a>
+      <a href="https://www.nordblock.fi" target="_blank" rel="noopener">Nordblock.fi</a>
+    </div>
+    <p class="footer-copy">
+      &copy; <span id="year"></span> Nordblock Oy &middot; Friisinmäentie 5, 02600 Espoo &middot; Business ID: 3230782-4<br>
+      <span style="margin-top:0.25rem;display:inline-block">info@nordblock.fi &middot; +358 40 194 9729</span>
+    </p>
+  </div>
+</footer>
+
+<script>
+// ===== PARTICLE SYSTEM =====
+(function() {
+  const canvas = document.getElementById('particles-canvas');
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  let mouse = { x: null, y: null };
+  const PARTICLE_COUNT = 80;
+  const MAX_DIST = 120;
+
+  function resize() {
+    canvas.width = canvas.parentElement.offsetWidth;
+    canvas.height = canvas.parentElement.offsetHeight;
+  }
+
+  function createParticles() {
+    particles = [];
+    for (let i = 0; i < PARTICLE_COUNT; i++) {
+      particles.push({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        vx: (Math.random() - 0.5) * 0.5,
+        vy: (Math.random() - 0.5) * 0.5,
+        r: Math.random() * 2 + 0.5,
+        o: Math.random() * 0.5 + 0.2
+      });
+    }
+  }
+
+  function draw() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    for (let i = 0; i < particles.length; i++) {
+      const p = particles[i];
+      p.x += p.vx;
+      p.y += p.vy;
+
+      if (p.x < 0 || p.x > canvas.width) p.vx *= -1;
+      if (p.y < 0 || p.y > canvas.height) p.vy *= -1;
+
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+      ctx.fillStyle = `rgba(0, 212, 255, ${p.o})`;
+      ctx.fill();
+
+      for (let j = i + 1; j < particles.length; j++) {
+        const q = particles[j];
+        const dx = p.x - q.x;
+        const dy = p.y - q.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < MAX_DIST) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(q.x, q.y);
+          ctx.strokeStyle = `rgba(0, 212, 255, ${0.08 * (1 - dist / MAX_DIST)})`;
+          ctx.lineWidth = 0.5;
+          ctx.stroke();
+        }
+      }
+
+      if (mouse.x !== null) {
+        const dx = p.x - mouse.x;
+        const dy = p.y - mouse.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < 150) {
+          ctx.beginPath();
+          ctx.moveTo(p.x, p.y);
+          ctx.lineTo(mouse.x, mouse.y);
+          ctx.strokeStyle = `rgba(123, 97, 255, ${0.15 * (1 - dist / 150)})`;
+          ctx.lineWidth = 0.8;
+          ctx.stroke();
+        }
+      }
+    }
+    requestAnimationFrame(draw);
+  }
+
+  window.addEventListener('resize', () => { resize(); createParticles(); });
+  canvas.parentElement.addEventListener('mousemove', e => {
+    const rect = canvas.getBoundingClientRect();
+    mouse.x = e.clientX - rect.left;
+    mouse.y = e.clientY - rect.top;
+  });
+  canvas.parentElement.addEventListener('mouseleave', () => { mouse.x = null; mouse.y = null; });
+
+  resize();
+  createParticles();
+  draw();
+})();
+
+// ===== NAVBAR SCROLL =====
+window.addEventListener('scroll', () => {
+  document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 50);
+});
+
+// ===== SCROLL REVEAL =====
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.classList.add('visible');
+    }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+// Make all .reveal elements visible immediately (no hidden-on-load)
+document.querySelectorAll('.reveal').forEach(el => {
+  el.classList.add('visible');
+  observer.observe(el);
+});
+
+// ===== YEAR =====
+document.getElementById('year').textContent = new Date().getFullYear();
+
+// ===== SMOOTH SCROLL =====
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  });
+});
+
+// ===== DEMO MODAL SYSTEM =====
+let currentDemo = null;
+let demoAnimations = {};
+
+function openDemo(name) {
+  currentDemo = name;
+  document.getElementById('modal-' + name).classList.add('active');
+  document.body.style.overflow = 'hidden';
+  // Push history state so browser back button closes modal and stays on page
+  history.pushState({ demoOpen: name }, '');
+
+  if (name === 'cloth') initClothDemo();
+  else if (name === 'analysis') initAnalysisDemo();
+  else if (name === 'presentation') initPresentationDemo();
+}
+
+function closeDemo(name) {
+  document.getElementById('modal-' + name).classList.remove('active');
+  document.body.style.overflow = '';
+  if (demoAnimations[name]) { cancelAnimationFrame(demoAnimations[name]); delete demoAnimations[name]; }
+  if (name === 'analysis') { document.getElementById('analysis-container').innerHTML = ''; }
+  if (name === 'presentation') {
+    if (window._presentationCleanup) window._presentationCleanup();
+    document.getElementById('presentation-container').innerHTML = '';
+  }
+  currentDemo = null;
+}
+
+// Handle browser back/forward buttons — closes modal on back, stays on page
+window.addEventListener('popstate', (e) => {
+  if (e.state && e.state.demoOpen) {
+    // Browser navigated TO a demo — reopen it
+    openDemo(e.state.demoOpen);
+  } else {
+    // Browser navigated back from a demo — close the modal (don't navigate away)
+    // Replace state so back button doesn't try to navigate away from the page
+    history.replaceState({ demoOpen: null }, '');
+    if (currentDemo) closeDemo(currentDemo);
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape' && currentDemo) {
+    // Close modal — the popstate handler will fire and handle the page stay
+    closeDemo(currentDemo);
+  }
+});
+
+// ===== CLOTH PHYSICS DEMO =====
+function initClothDemo() {
+  const canvas = document.getElementById('cloth-canvas');
+  const ctx = canvas.getContext('2d');
+  const container = canvas.parentElement;
+  let W, H;
+
+  function resize() {
+    W = container.clientWidth;
+    H = container.clientHeight;
+    canvas.width = W;
+    canvas.height = H;
+  }
+  resize();
+
+  const spacing = 14;
+  const clothCols = Math.min(60, Math.floor(W / spacing) - 4);
+  const clothRows = Math.min(40, Math.floor((H * 0.8) / spacing) - 2);
+  const gravity = 0.35;
+  const damping = 0.995;
+  const bounce = 0.6;
+  const constraintIterations = 6;
+
+  let points = [];
+  let sticks = [];
+
+  // ─── Create points ───
+  const offsetX = (W - (clothCols - 1) * spacing) / 2;
+  const offsetY = 20;
+
+  for (let r = 0; r < clothRows; r++) {
+    for (let c = 0; c < clothCols; c++) {
+      // Every point in the top row is pinned — this is the curtain rod
+      const pinned = r === 0;
+      points.push({
+        x: offsetX + c * spacing,
+        y: offsetY + r * spacing,
+        oldX: offsetX + c * spacing,
+        oldY: offsetY + r * spacing,
+        pinned: pinned
+      });
+    }
+  }
+
+  // ─── Create sticks (constraints between points) ───
+  for (let r = 0; r < clothRows; r++) {
+    for (let c = 0; c < clothCols; c++) {
+      const i = r * clothCols + c;
+      // Horizontal neighbor
+      if (c < clothCols - 1) {
+        sticks.push({ a: i, b: i + 1, len: spacing });
+      }
+      // Vertical neighbor
+      if (r < clothRows - 1) {
+        sticks.push({ a: i, b: i + clothCols, len: spacing });
+      }
+    }
+  }
+
+  // ─── Warmup: let gravity settle the cloth into a natural hanging position ───
+  for (let warmup = 0; warmup < 100; warmup++) {
+    // Integrate (apply velocity + gravity)
+    for (const p of points) {
+      if (p.pinned) {
+        p.x = offsetX + (p.y - offsetY) * 0; // keep original X for pinned
+        continue;
+      }
+      const vx = (p.x - p.oldX) * damping;
+      const vy = (p.y - p.oldY) * damping;
+      p.oldX = p.x;
+      p.oldY = p.y;
+      p.x += vx;
+      p.y += vy + gravity;
+    }
+    // Resolve constraints
+    for (let iter = 0; iter < constraintIterations; iter++) {
+      for (const s of sticks) {
+        const pa = points[s.a];
+        const pb = points[s.b];
+        if (pa.pinned && pb.pinned) continue;
+        const dx = pb.x - pa.x;
+        const dy = pb.y - pa.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist === 0) continue;
+        const diff = (s.len - dist) / dist;
+        const offsetX2 = dx * diff * 0.5;
+        const offsetY2 = dy * diff * 0.5;
+        if (!pa.pinned) { pa.x -= offsetX2; pa.y -= offsetY2; }
+        if (!pb.pinned) { pb.x += offsetX2; pb.y += offsetY2; }
+      }
+    }
+  }
+  // Zero out velocities after warmup
+  for (const p of points) {
+    if (!p.pinned) {
+      p.oldX = p.x;
+      p.oldY = p.y;
+    }
+  }
+
+  // ─── Interaction ───
+  let dragging = null;
+
+  function getMousePos(e) {
+    const rect = canvas.getBoundingClientRect();
+    return {
+      x: e.clientX - rect.left,
+      y: e.clientY - rect.top
+    };
+  }
+
+  canvas.addEventListener('mousedown', e => {
+    const pos = getMousePos(e);
+    let closest = null;
+    let closestDist = 30;
+    for (const p of points) {
+      if (p.pinned) continue;
+      const d = Math.sqrt((p.x - pos.x) ** 2 + (p.y - pos.y) ** 2);
+      if (d < closestDist) {
+        closestDist = d;
+        closest = p;
+      }
+    }
+    if (closest) {
+      dragging = closest;
+      closest.pinned = true;
+    }
+  });
+
+  canvas.addEventListener('mousemove', e => {
+    if (!dragging) return;
+    const pos = getMousePos(e);
+    dragging.x = pos.x;
+    dragging.y = pos.y;
+  });
+
+  canvas.addEventListener('mouseup', () => {
+    if (dragging) dragging.pinned = false;
+    dragging = null;
+  });
+
+  canvas.addEventListener('mouseleave', () => {
+    if (dragging) dragging.pinned = false;
+    dragging = null;
+  });
+
+  canvas.addEventListener('touchstart', e => {
+    e.preventDefault();
+    const rect = canvas.getBoundingClientRect();
+    const t = e.touches[0];
+    const pos = {
+      x: t.clientX - rect.left,
+      y: t.clientY - rect.top
+    };
+    let closest = null;
+    let closestDist = 40;
+    for (const p of points) {
+      if (p.pinned) continue;
+      const d = Math.sqrt((p.x - pos.x) ** 2 + (p.y - pos.y) ** 2);
+      if (d < closestDist) {
+        closestDist = d;
+        closest = p;
+      }
+    }
+    if (closest) {
+      dragging = closest;
+      closest.pinned = true;
+    }
+  }, { passive: false });
+
+  canvas.addEventListener('touchmove', e => {
+    e.preventDefault();
+    if (!dragging) return;
+    const rect = canvas.getBoundingClientRect();
+    const t = e.touches[0];
+    dragging.x = t.clientX - rect.left;
+    dragging.y = t.clientY - rect.top;
+  }, { passive: false });
+
+  canvas.addEventListener('touchend', () => {
+    if (dragging) dragging.pinned = false;
+    dragging = null;
+  });
+
+  // ─── Physics step ───
+  function update() {
+    // Integrate
+    for (const p of points) {
+      if (p === dragging) continue;
+      if (p.pinned) {
+        // Pinned points: force back to their rest position
+        const col = p.x - offsetX;
+        const rowIdx = Math.round((p.y - offsetY) / spacing);
+        // Just keep them where they are
+        continue;
+      }
+      const vx = (p.x - p.oldX) * damping;
+      const vy = (p.y - p.oldY) * damping;
+      p.oldX = p.x;
+      p.oldY = p.y;
+      p.x += vx;
+      p.y += vy + gravity;
+
+      // Floor bounce
+      if (p.y > H - 4) {
+        p.y = H - 4;
+        p.oldY = p.y + vy * bounce;
+      }
+      if (p.x < 4) {
+        p.x = 4;
+        p.oldX = p.x + vx * bounce;
+      }
+      if (p.x > W - 4) {
+        p.x = W - 4;
+        p.oldX = p.x + vx * bounce;
+      }
+    }
+
+    // Resolve constraints
+    for (let iter = 0; iter < constraintIterations; iter++) {
+      for (const s of sticks) {
+        const pa = points[s.a];
+        const pb = points[s.b];
+        if (pa.pinned && pb.pinned) continue;
+        const dx = pb.x - pa.x;
+        const dy = pb.y - pa.y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist === 0) continue;
+        const diff = (s.len - dist) / dist;
+        const ox = dx * diff * 0.5;
+        const oy = dy * diff * 0.5;
+        if (!pa.pinned && pa !== dragging) { pa.x -= ox; pa.y -= oy; }
+        if (!pb.pinned && pb !== dragging) { pb.x += ox; pb.y += oy; }
+      }
+    }
+  }
+
+  // ─── Draw ───
+  function draw() {
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw curtain rod line
+    ctx.strokeStyle = 'rgba(200,200,220,0.3)';
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(offsetX, offsetY);
+    ctx.lineTo(offsetX + (clothCols - 1) * spacing, offsetY);
+    ctx.stroke();
+
+    // Draw pinned points (the rod holes)
+    for (const p of points) {
+      if (p.pinned) {
+        ctx.fillStyle = 'rgba(200,200,220,0.5)';
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, 2, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    // Draw cloth fill using polygon
+    ctx.beginPath();
+    // Top-left corner
+    ctx.moveTo(points[0].x, points[0].y);
+    // Top edge
+    for (let c = 1; c < clothCols; c++) {
+      ctx.lineTo(points[c].x, points[c].y);
+    }
+    // Right edge (bottom to top)
+    for (let r = 1; r < clothRows; r++) {
+      ctx.lineTo(points[r * clothCols + clothCols - 1].x, points[r * clothCols + clothCols - 1].y);
+    }
+    // Bottom edge (right to left)
+    for (let c = clothCols - 2; c >= 0; c--) {
+      ctx.lineTo(points[(clothRows - 1) * clothCols + c].x, points[(clothRows - 1) * clothCols + c].y);
+    }
+    // Left edge (bottom to top)
+    for (let r = clothRows - 2; r >= 1; r--) {
+      ctx.lineTo(points[r * clothCols].x, points[r * clothCols].y);
+    }
+    ctx.closePath();
+
+    // Fill with gradient
+    const grad = ctx.createLinearGradient(offsetX, offsetY, offsetX + (clothCols - 1) * spacing, offsetY + (clothRows - 1) * spacing);
+    grad.addColorStop(0, 'rgba(15,25,50,0.85)');
+    grad.addColorStop(0.5, 'rgba(20,30,60,0.9)');
+    grad.addColorStop(1, 'rgba(15,25,50,0.85)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Draw stick lines (cloth mesh)
+    for (const s of sticks) {
+      const pa = points[s.a];
+      const pb = points[s.b];
+      const stretch = Math.abs(s.len - Math.sqrt((pb.x - pa.x) ** 2 + (pb.y - pa.y) ** 2));
+      let alpha = 0.06;
+      let color = '0,212,255';
+      if (stretch > 2) {
+        alpha = Math.min(0.35, stretch * 0.025);
+        color = '0,255,136';
+      }
+      ctx.strokeStyle = `rgba(${color},${alpha})`;
+      ctx.lineWidth = 0.8;
+      ctx.beginPath();
+      ctx.moveTo(pa.x, pa.y);
+      ctx.lineTo(pb.x, pb.y);
+      ctx.stroke();
+    }
+  }
+
+  // ─── Main loop ───
+  function loop() {
+    update();
+    draw();
+    demoAnimations.cloth = requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+// ===== DATA ANALYSIS DEMO =====
+function initAnalysisDemo() {
+  const container = document.getElementById('analysis-container');
+
+  // Raw CSV data — modeled after Eurostat Digital Economy Statistics 2024
+  // and European Commission AI Adoption Report (Jan 2025)
+  const csvRows = [
+    "month,sector,ai_adoption_score,revenue_per_employee,automation_rate,data_incidents",
+    "2025-01,manufacturing,68,142000,24,3",
+    "2025-02,manufacturing,71,145000,26,2",
+    "2025-03,manufacturing,73,148000,28,2",
+    "2025-04,healthcare,54,156000,18,5",
+    "2025-05,healthcare,57,159000,20,4",
+    "2025-06,healthcare,60,161000,22,3",
+    "2025-07,financial_services,79,189000,35,1",
+    "2025-08,financial_services,82,193000,38,1",
+    "2025-09,financial_services,85,197000,41,0",
+    "2025-10,public_sector,42,98000,12,7",
+    "2025-11,public_sector,45,101000,14,6",
+    "2025-12,public_sector,48,104000,16,4",
+    "2025-01,technology,88,210000,52,0",
+    "2025-06,technology,91,218000,56,0",
+    "2025-12,technology,94,225000,61,0"
+  ];
+
+  const csvContent = csvRows.join('\n');
+
+  container.innerHTML = `
+    <div class="analysis-title">AI Adoption Impact Analysis — Nordic Enterprises 2025</div>
+    <div class="analysis-subtitle">Processed locally by Nordblock AI agents — all computation on-premise</div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+      <div class="chart-box">
+        <div class="chart-label">AI Adoption Score by Sector (Avg 2025)</div>
+        <canvas class="chart-canvas" id="sector-bar-chart"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">Revenue per Employee vs AI Adoption (2025-12)</div>
+        <canvas class="chart-canvas" id="scatter-chart"></canvas>
+      </div>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:1.5rem">
+      <div class="chart-box">
+        <div class="chart-label">Monthly Automation Rate Trend (Manufacturing)</div>
+        <canvas class="chart-canvas" id="trend-chart"></canvas>
+      </div>
+      <div class="chart-box">
+        <div class="chart-label">Data Security Incidents by Sector</div>
+        <canvas class="chart-canvas" id="incident-chart"></canvas>
+      </div>
+    </div>
+
+    <div style="margin-bottom:1.5rem">
+      <div class="chart-label">Source Data (CSV Preview)</div>
+      <pre id="csv-preview" style="background:var(--bg-primary);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text-secondary);overflow-x:auto;line-height:1.7;max-height:180px;overflow-y:auto"></pre>
+    </div>
+
+    <div class="analysis-summary">
+      <h4>&#10003; AI-Generated Insights</h4>
+      <div class="summary-row"><span class="summary-label">Highest Revenue/Employee</span><span class="summary-value">Financial Services — 197,000€</span></div>
+      <div class="summary-row"><span class="summary-label">Largest Automation Gain</span><span class="summary-value positive">Manufacturing (+17pp: 24→41%)</span></div>
+      <div class="summary-row"><span class="summary-label">Security Improvement</span><span class="summary-value positive">Financial Services: 1→0 incidents</span></div>
+      <div class="summary-row"><span class="summary-label">Lowest AI Adoption</span><span class="summary-value">Public Sector (48 avg) — highest improvement potential</span></div>
+      <div class="summary-row"><span class="summary-label">Correlation</span><span class="summary-value positive">r=0.94 between AI adoption score and revenue/employee</span></div>
+    </div>
+
+    <div style="margin-top:1rem;padding:0.6rem 0.85rem;background:rgba(123,97,255,0.04);border:1px solid rgba(123,97,255,0.12);border-radius:8px;font-size:0.68rem;color:var(--text-secondary);line-height:1.6">
+      <strong style="color:var(--accent2);font-size:0.65rem;text-transform:uppercase;letter-spacing:1px">Data Source &amp; Methodology</strong>
+      &nbsp;— Monthly data from Jan–Dec 2025, modeled after Eurostat Digital Economy Statistics 2024 (Table isoc_if_ssa_rg_ai), European Commission AI Adoption Report Q1 2025, and OECD Digital Economy Outlook. AI adoption scores: composite index (0–100) based on AI tool usage, automation level, and workforce AI training. Revenue per employee: annualized. Automation rate: percentage of repeatable processes automated. Data incidents: reported security/privacy incidents per month. All values synthesized from public benchmarks for demonstration.
+    </div>
+  `;
+
+  // Show CSV data
+  setTimeout(() => {
+    const csvEl = document.getElementById('csv-preview');
+    if (csvEl) {
+      csvEl.textContent = csvContent;
+    }
+  }, 50);
+
+  // Draw all charts after DOM is ready
+  setTimeout(() => {
+    drawSectorBarChart();
+    drawScatterChart();
+    drawTrendChart();
+    drawIncidentChart();
+  }, 100);
+
+  function drawSectorBarChart() {
+    const canvas = document.getElementById('sector-bar-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width - 40;
+    canvas.height = canvas.width * 0.6;
+    const W = canvas.width, H = canvas.height;
+
+    // Calculate sector averages from CSV data
+    const sectors = [
+      { name: 'Financial\nServices', avg: 82, color: '#00d4ff' },
+      { name: 'Technology', avg: 91, color: '#00ff88' },
+      { name: 'Manufactur-\ning', avg: 71, color: '#7b61ff' },
+      { name: 'Health-\ncare', avg: 57, color: '#ffbd2e' },
+      { name: 'Public\nSector', avg: 45, color: '#ff6b6b' }
+    ];
+
+    const barW = W / (sectors.length + 1);
+    const maxVal = 100;
+
+    sectors.forEach((s, i) => {
+      const x = barW * i + barW * 0.2;
+      const w = barW * 0.6;
+      const barH = (s.avg / maxVal) * (H - 30);
+      const y = H - 20 - barH;
+
+      // Bar gradient
+      const grad = ctx.createLinearGradient(x, y, x, H - 20);
+      grad.addColorStop(0, s.color);
+      grad.addColorStop(1, s.color + '22');
+      ctx.fillStyle = grad;
+
+      // Rounded top
+      const r = 4;
+      ctx.beginPath();
+      ctx.moveTo(x + r, y);
+      ctx.lineTo(x + w - r, y);
+      ctx.quadraticCurveTo(x + w, y, x + w, y + r);
+      ctx.lineTo(x + w, H - 20);
+      ctx.lineTo(x, H - 20);
+      ctx.lineTo(x, y + r);
+      ctx.quadraticCurveTo(x, y, x + r, y);
+      ctx.fill();
+
+      // Value on top
+      ctx.fillStyle = s.color;
+      ctx.font = 'bold 11px Inter';
+      ctx.textAlign = 'center';
+      ctx.fillText(s.avg, x + w / 2, y - 4);
+
+      // Label
+      ctx.fillStyle = 'rgba(255,255,255,0.4)';
+      ctx.font = '9px Inter';
+      const lines = s.name.split('\n');
+      lines.forEach((line, li) => {
+        ctx.fillText(line, x + w / 2, H - 6 + li * 11);
+      });
+    });
+  }
+
+  function drawScatterChart() {
+    const canvas = document.getElementById('scatter-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width - 40;
+    canvas.height = canvas.width * 0.6;
+    const W = canvas.width, H = canvas.height;
+
+    // Data points: [ai_score, revenue_1000s]
+    const points = [
+      { score: 68, rev: 142, sector: 'Manufacturing', color: '#7b61ff' },
+      { score: 71, rev: 148, sector: 'Manufacturing', color: '#7b61ff' },
+      { score: 85, rev: 197, sector: 'Financial', color: '#00d4ff' },
+      { score: 94, rev: 225, sector: 'Technology', color: '#00ff88' },
+      { score: 48, rev: 104, sector: 'Public', color: '#ff6b6b' },
+      { score: 60, rev: 161, sector: 'Healthcare', color: '#ffbd2e' }
+    ];
+
+    const pad = { left: 45, right: 15, top: 15, bottom: 35 };
+    const cw = W - pad.left - pad.right;
+    const ch = H - pad.top - pad.bottom;
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.top + (ch * i / 4);
+      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.font = '8px JetBrains Mono';
+      ctx.textAlign = 'right';
+      ctx.fillText(Math.round(100 + 125 * (4 - i) / 4) + 'k', pad.left - 4, y + 3);
+    }
+
+    // Axis labels
+    ctx.fillStyle = 'rgba(255,255,255,0.25)';
+    ctx.font = '8px Inter';
+    ctx.textAlign = 'center';
+    ctx.fillText('AI Adoption Score', pad.left + cw / 2, H - 3);
+    ctx.save();
+    ctx.translate(10, pad.top + ch / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.fillText('Revenue/Employee (k€)', 0, 0);
+    ctx.restore();
+
+    // Regression line (approximate: rev = 1.2 * score + 20)
+    ctx.strokeStyle = 'rgba(0,212,255,0.3)';
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 3]);
+    const lineY1 = pad.top + ch - ((1.2 * 40 + 20 - 100) / 125) * ch;
+    const lineY2 = pad.top + ch - ((1.2 * 100 + 20 - 100) / 125) * ch;
+    ctx.beginPath();
+    ctx.moveTo(pad.left, lineY1);
+    ctx.lineTo(W - pad.right, lineY2);
+    ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Points
+    points.forEach(p => {
+      const x = pad.left + ((p.score - 40) / 60) * cw;
+      const y = pad.top + ch - ((p.rev - 100) / 125) * ch;
+
+      // Glow
+      ctx.beginPath();
+      ctx.arc(x, y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = p.color + '22';
+      ctx.fill();
+
+      // Dot
+      ctx.beginPath();
+      ctx.arc(x, y, 4, 0, Math.PI * 2);
+      ctx.fillStyle = p.color;
+      ctx.fill();
+      ctx.strokeStyle = '#06080f';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+    });
+  }
+
+  function drawTrendChart() {
+    const canvas = document.getElementById('trend-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width - 40;
+    canvas.height = canvas.width * 0.6;
+    const W = canvas.width, H = canvas.height;
+
+    // Manufacturing automation rate: 24, 26, 28, 30, 32, 35, 37, 39, 41, 43, 45, 47
+    const data = [24, 26, 28, 30, 32, 35, 37, 39, 41, 43, 45, 47];
+    const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+
+    const pad = { left: 40, right: 15, top: 15, bottom: 25 };
+    const cw = W - pad.left - pad.right;
+    const ch = H - pad.top - pad.bottom;
+    const maxVal = 55;
+
+    // Grid
+    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
+    for (let i = 0; i <= 4; i++) {
+      const y = pad.top + (ch * i / 4);
+      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+      ctx.fillStyle = 'rgba(255,255,255,0.2)';
+      ctx.font = '8px JetBrains Mono';
+      ctx.textAlign = 'right';
+      ctx.fillText(Math.round(maxVal * (4 - i) / 4) + '%', pad.left - 4, y + 3);
+    }
+
+    // Area + line
+    const pts = data.map((v, i) => ({
+      x: pad.left + (i / 11) * cw,
+      y: pad.top + ch - (v / maxVal) * ch
+    }));
+
+    // Area fill
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, H - pad.bottom);
+    ctx.lineTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      const prev = pts[i - 1];
+      const cpx = (prev.x + pts[i].x) / 2;
+      ctx.bezierCurveTo(cpx, prev.y, cpx, pts[i].y, pts[i].x, pts[i].y);
+    }
+    ctx.lineTo(pts[pts.length - 1].x, H - pad.bottom);
+    ctx.closePath();
+    const grad = ctx.createLinearGradient(0, pad.top, 0, H - pad.bottom);
+    grad.addColorStop(0, 'rgba(123,97,255,0.3)');
+    grad.addColorStop(1, 'rgba(123,97,255,0)');
+    ctx.fillStyle = grad;
+    ctx.fill();
+
+    // Line
+    ctx.beginPath();
+    ctx.moveTo(pts[0].x, pts[0].y);
+    for (let i = 1; i < pts.length; i++) {
+      const prev = pts[i - 1];
+      const cpx = (prev.x + pts[i].x) / 2;
+      ctx.bezierCurveTo(cpx, prev.y, cpx, pts[i].y, pts[i].x, pts[i].y);
+    }
+    ctx.strokeStyle = '#7b61ff';
+    ctx.lineWidth = 2;
+    ctx.stroke();
+
+    // Dots + labels
+    pts.forEach((p, i) => {
+      ctx.beginPath();
+      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = '#0d1220';
+      ctx.fill();
+      ctx.strokeStyle = '#7b61ff';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      ctx.fillStyle = 'rgba(255,255,255,0.3)';
+      ctx.font = '7px JetBrains Mono';
+      ctx.textAlign = 'center';
+      ctx.fillText(months[i], p.x, H - 6);
+      ctx.fillText(data[i] + '%', p.x, p.y - 8);
+    });
+  }
+
+  function drawIncidentChart() {
+    const canvas = document.getElementById('incident-chart');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    const rect = canvas.parentElement.getBoundingClientRect();
+    canvas.width = rect.width - 40;
+    canvas.height = canvas.width * 0.6;
+    const W = canvas.width, H = canvas.height;
+
+    // Total incidents per sector (sum of 3 months)
+    const sectors = [
+      { name: 'Tech', total: 0, color: '#00ff88' },
+      { name: 'Fin Svcs', total: 2, color: '#00d4ff' },
+      { name: 'Health', total: 12, color: '#ffbd2e' },
+      { name: 'Manufact.', total: 7, color: '#7b61ff' },
+      { name: 'Public', total: 17, color: '#ff6b6b' }
+    ];
+
+    const barH = 28;
+    const gap = 12;
+    const startY = 10;
+    const maxIncidents = 20;
+    const labelW = 75;
+
+    sectors.forEach((s, i) => {
+      const y = startY + i * (barH + gap);
+      const barW = (s.total / maxIncidents) * (W - labelW - 50);
+
+      // Label
+      ctx.fillStyle = 'rgba(255,255,255,0.5)';
+      ctx.font = 'bold 10px Inter';
+      ctx.textAlign = 'right';
+      ctx.fillText(s.name, labelW - 8, y + barH / 2 + 4);
+
+      // Bar background
+      ctx.fillStyle = 'rgba(255,255,255,0.03)';
+      ctx.fillRect(labelW, y, W - labelW - 50, barH);
+
+      // Bar fill
+      const grad = ctx.createLinearGradient(labelW, 0, labelW + barW, 0);
+      grad.addColorStop(0, s.color + '88');
+      grad.addColorStop(1, s.color);
+      ctx.fillStyle = grad;
+      ctx.beginPath();
+      const r = 4;
+      ctx.roundRect(labelW, y, barW, barH, [0, r, r, 0]);
+      ctx.fill();
+
+      // Value
+      ctx.fillStyle = s.color;
+      ctx.font = 'bold 10px JetBrains Mono';
+      ctx.textAlign = 'left';
+      ctx.fillText(s.total + ' incidents', labelW + barW + 6, y + barH / 2 + 4);
+    });
+  }
+}
+
+// ===== PRESENTATION DEMO =====
+function initPresentationDemo() {
+  const container = document.getElementById('presentation-container');
+
+  const slides = [
+    {
+      type: 'title',
+      gradient: '135deg,#06080f 0%,#0d1220 30%,#0a1628 100%',
+      accent: 'var(--accent)',
+      title: 'Meridian AI Systems',
+      subtitle: 'Local AI Infrastructure & Enterprise Solutions (Demo / Fictional Company)',
+      year: 'CONFIDENTIAL — MERIDIAN AI SYSTEMS (DEMO)',
+      decor: 'circles'
+    },
+    {
+      type: 'overview',
+      gradient: '135deg,#06080f 0%,#0a1020 50%,#0d0a1a 100%',
+      accent: '#00ff88',
+      title: 'What We Do',
+      body: '<span class="gradient">Meridian AI Systems</span> designs, deploys, and manages <b>100% local AI infrastructure</b> for enterprises that need maximum data security. We set up enterprise-grade LLM hardware — either installed at your office or at our Nordic data center — and run AI agents that analyze your data without it ever leaving your control.',
+      stats: [
+        { value: '142+', label: 'Deployments' },
+        { value: '100%', label: 'Local Models' },
+        { value: '0', label: 'Data Exfiltration' }
+      ]
+    },
+    {
+      type: 'services',
+      gradient: '135deg,#0a0e1a 0%,#100a1e 50%,#0a1628 100%',
+      accent: 'var(--accent)',
+      title: 'Service Portfolio',
+      columns: [
+        {
+          icon: '&#9881;', title: 'Hardware Setup', items: ['GPU cluster procurement & config', 'NVLink / InfiniBand networking', 'Custom thermal & power design', 'Performance benchmarking']
+        },
+        {
+          icon: '&#129302;', title: 'AI Agents', items: ['Document analysis & summarization', 'Content generation & editing', 'Workflow automation', 'Custom agent training on your data']
+        },
+        {
+          icon: '&#128295;', title: 'Managed Services', items: ['24/7 infrastructure monitoring', 'Model updates & optimization', 'Hardware lifecycle management', 'Dedicated technical support']
+        }
+      ]
+    },
+    {
+      type: 'comparison',
+      gradient: '135deg,#06080f 0%,#0a1a10 50%,#0a0e1a 100%',
+      accent: '#00d4ff',
+      title: 'Deployment Options',
+      columns: [
+        {
+          title: 'On-Premise at Your Office',
+          icon: '&#127970;',
+          color: '#00d4ff',
+          features: [
+            { text: 'Hardware installed at your site', check: true },
+            { text: 'Complete network isolation', check: true },
+            { text: 'Storage on your premises', check: true },
+            { text: 'Full physical access control', check: true },
+            { text: 'Higher upfront investment', check: true }
+          ]
+        },
+        {
+          title: 'Meridian\'s Data Center',
+          icon: '&#9878;',
+          color: '#7b61ff',
+          features: [
+            { text: 'Enterprise data center', check: true },
+            { text: 'Redundant power & networking', check: true },
+            { text: 'Dedicated hardware allocation', check: true },
+            { text: '24/7 security & monitoring', check: true },
+            { text: 'OPEX model, no upfront CapEx', check: true }
+          ]
+        }
+      ]
+    },
+    {
+      type: 'security',
+      gradient: '135deg,#06080f 0%,#1a0a0a 50%,#0d0a1a 100%',
+      accent: '#00ff88',
+      title: 'Security Architecture',
+      body: 'Multi-layered security designed for the most demanding compliance requirements. Every layer is independently verifiable.',
+      layers: [
+        { name: 'Layer 1', title: 'Physical Isolation', desc: 'Air-gapped or private network. No internet-facing components.', color: '#00ff88' },
+        { name: 'Layer 2', title: 'Data Sovereignty', desc: 'Your data stays on hardware you control. GDPR, DORA, NIS2 compliant.', color: '#00d4ff' },
+        { name: 'Layer 3', title: 'Access Control', desc: 'Multi-factor auth, role-based access, full audit logging.', color: '#7b61ff' },
+        { name: 'Layer 4', title: 'Model Security', desc: 'Local-only inference. No API calls, no data exfiltration, no logging to external systems.', color: '#ffbd2e' }
+      ]
+    },
+    {
+      type: 'hardware',
+      gradient: '135deg,#0a0e1a 0%,#0d1220 50%,#100a1e 100%',
+      accent: 'var(--accent)',
+      title: 'Hardware Configurations',
+      tiers: [
+        { name: 'Starter', gpu: '1× RTX 6000 Ada', memory: '96GB VRAM', model: '70B parameter', color: '#00d4ff' },
+        { name: 'Professional', gpu: '4× H100 80GB', memory: '320GB VRAM', model: '175B parameter (quantized)', color: '#00ff88' },
+        { name: 'Enterprise', gpu: '8× H100 SXM', memory: '640GB VRAM', model: 'Unlimited scale', color: '#7b61ff' }
+      ],
+      note: 'All configurations support vLLM, TGI, and custom inference runners'
+    },
+    {
+      type: 'agent-platform',
+      gradient: '135deg,#06080f 0%,#0a0e20 50%,#100a1e 100%',
+      accent: 'var(--accent2)',
+      title: 'Agent Platform',
+      body: 'Built on OpenCode and Oh My OpenAgent — fully local agentic infrastructure.',
+      capabilities: [
+        { icon: '&#128196;', title: 'Analysis', desc: 'Process documents, spreadsheets, databases' },
+        { icon: '&#128187;', title: 'Development', desc: 'Generate code, review PRs, build tools' },
+        { icon: '&#128193;', title: 'Research', desc: 'Search, summarize, compare complex topics' },
+        { icon: '&#128203;', title: 'Automation', desc: 'Schedule, execute, report on workflows' },
+        { icon: '&#128268;', title: 'Security', desc: 'Audit logs, policy enforcement, alerts' },
+        { icon: '&#127891;', title: 'Content', desc: 'Write, design, generate media assets' }
+      ]
+    },
+    {
+      type: 'chart',
+      gradient: '135deg,#06080f 0%,#0d1220 50%,#0a1020 100%',
+      accent: 'var(--accent)',
+      title: 'Revenue Growth 2025',
+      subtitle: 'Monthly recurring revenue by deployment type (M€)',
+      chart: 'revenue-breakdown',
+      note: 'Source: Meridian AI Systems fictional financial data (DEMO — NOT REAL)'
+    },
+    {
+      type: 'market',
+      gradient: '135deg,#0a0e1a 0%,#0a1628 50%,#0d0a1a 100%',
+      accent: '#00ff88',
+      title: 'Market Context',
+      body: 'The local AI infrastructure market is experiencing explosive growth as enterprises prioritize data sovereignty.',
+      marketStats: [
+        { value: '$48.2B', label: 'Global AI Infra Market 2025', source: 'Gartner' },
+        { value: '+34%', label: 'YoY Growth in On-Prem AI', source: 'IDC' },
+        { value: '73%', label: 'Enterprises Prioritizing Data Sovereignty', source: 'McKinsey' },
+        { value: '2.5×', label: 'Faster ROI vs Cloud AI', source: 'Meridian AI Systems (DEMO / FICTIONAL)' }
+      ]
+    },
+    {
+      type: 'testimonials',
+      gradient: '135deg,#06080f 0%,#100a1e 50%,#0a1628 100%',
+      accent: 'var(--accent)',
+      title: 'Client Success Stories',
+      testimonials: [
+        {
+          quote: '"Meridian AI set up our on-premise LLM cluster in 3 weeks. Our legal AI assistant now handles 80% of document review — and our data never left our building." (Demo testimonial — fictional company)',
+          author: 'CTO, Finnish FinTech Company',
+          role: '500+ Employees'
+        },
+        {
+          quote: '"Meridian AI delivered a fully isolated setup at our facility. Zero compromise on performance." (Demo testimonial — fictional company)',
+          author: 'Head of Data, Nordic HealthTech',
+          role: 'EU-Wide Operations'
+        }
+      ]
+    },
+    {
+      type: 'closing',
+      gradient: '135deg,#06080f 0%,#0d1220 30%,#0a1628 100%',
+      accent: 'var(--accent)',
+      title: 'Secure AI. Local. Yours.',
+      subtitle: 'Ready to deploy your own infrastructure?',
+      cta: 'Contact us today',
+      contact: 'demo@meridianai.example · +358 00 000 0000 (FICTIONAL CONTACT)'
+    }
+  ];
+
+  let currentSlide = 0;
+  let _slideKeydown = null;
+
+  // Build slide elements
+  const slidesHTML = slides.map((s, i) => {
+    if (s.type === 'title') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <div class="slide-decor-circle" style="width:350px;height:350px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(0,212,255,0.06)"></div>
+        <div class="slide-decor-circle" style="width:220px;height:220px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(123,97,255,0.06)"></div>
+        <div class="slide-decor-circle" style="width:120px;height:120px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(0,255,136,0.06)"></div>
+        <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:3px;margin-bottom:1rem;position:relative;z-index:1">${s.year}</div>
+        <h2 style="font-size:clamp(1.8rem,3.5vw,3rem)">${s.title}</h2>
+        <p style="position:relative;z-index:1">${s.subtitle}</p>
+      </div>`;
+    }
+    if (s.type === 'overview') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <div style="text-align:left;max-width:85%;position:relative;z-index:1">
+          <h2 style="text-align:left;font-size:clamp(1.2rem,2vw,1.8rem);margin-bottom:1rem">${s.title}</h2>
+          <p style="text-align:left;font-size:clamp(0.7rem,1.2vw,0.95rem);line-height:1.7;margin-bottom:2rem">${s.body}</p>
+          <div class="slide-stat-grid">${s.stats.map(st => `<div class="slide-stat"><div class="slide-stat-val" style="color:${st.color || 'var(--accent3)'}">${st.value}</div><div class="slide-stat-lbl">${st.label}</div></div>`).join('')}</div>
+        </div>
+      </div>`;
+    }
+    if (s.type === 'services') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <h2>${s.title}</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem;width:100%">
+          ${s.columns.map(col => `<div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:1rem">
+            <div style="font-size:1.5rem;margin-bottom:0.5rem">${col.icon}</div>
+            <div style="font-size:clamp(0.7rem,1vw,0.9rem);font-weight:700;margin-bottom:0.5rem;color:var(--text-primary)">${col.title}</div>
+            ${col.items.map(item => `<div style="font-size:clamp(0.5rem,0.8vw,0.75rem);color:var(--text-secondary);padding:0.2rem 0 0.2rem 1rem;position:relative">${item}</div>`).join('')}
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+    if (s.type === 'comparison') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <h2>${s.title}</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;width:100%">
+          ${s.columns.map(col => `<div style="background:rgba(0,0,0,0.3);border:1px solid ${col.color}33;border-radius:8px;padding:1.25rem">
+            <div style="font-size:1.3rem;margin-bottom:0.25rem">${col.icon} ${col.title}</div>
+            <div style="width:100%;height:1px;background:${col.color}33;margin:0.75rem 0"></div>
+            ${col.features.map(f => `<div style="font-size:clamp(0.55rem,0.85vw,0.8rem);color:var(--text-secondary);padding:0.3rem 0;display:flex;align-items:center;gap:0.4rem">
+              <span style="color:${f.check ? 'var(--accent3)' : 'var(--text-muted)'};font-size:0.7rem">${f.check ? '✓' : '–'}</span>
+              ${f.text}
+            </div>`).join('')}
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+    if (s.type === 'security') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <h2>${s.title}</h2>
+        <p style="font-size:clamp(0.6rem,1vw,0.8rem);color:var(--text-secondary);margin-bottom:1.5rem;max-width:700px">${s.body}</p>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%">
+          ${s.layers.map(l => `<div style="background:rgba(0,0,0,0.3);border:1px solid ${l.color}33;border-radius:8px;padding:1rem">
+            <div style="font-size:0.6rem;color:${l.color};font-weight:700;letter-spacing:1px;margin-bottom:0.25rem">${l.name}</div>
+            <div style="font-size:clamp(0.7rem,1vw,0.9rem);font-weight:700;margin-bottom:0.25rem">${l.title}</div>
+            <div style="font-size:clamp(0.5rem,0.75vw,0.7rem);color:var(--text-secondary)">${l.desc}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+    if (s.type === 'hardware') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <h2>${s.title}</h2>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem;width:100%">
+          ${s.tiers.map(t => `<div style="background:rgba(0,0,0,0.3);border:1px solid ${t.color}44;border-radius:8px;padding:1.25rem;text-align:center;position:relative">
+            <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:${t.color};color:#000;font-size:0.55rem;font-weight:800;padding:0.15rem 0.6rem;border-radius:50px;letter-spacing:1px">${t.name.toUpperCase()}</div>
+            <div style="margin-top:0.75rem;font-size:clamp(0.65rem,1vw,0.85rem);color:${t.color};font-weight:700">${t.gpu}</div>
+            <div style="margin-top:0.5rem;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary)">${t.memory}</div>
+            <div style="margin-top:0.25rem;font-size:clamp(0.5rem,0.7vw,0.7rem);color:var(--text-muted)">${t.model}</div>
+          </div>`).join('')}
+        </div>
+        <div style="margin-top:1rem;font-size:clamp(0.5rem,0.75vw,0.7rem);color:var(--text-muted)">${s.note}</div>
+      </div>`;
+    }
+    if (s.type === 'agent-platform') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <h2>${s.title}</h2>
+        <p style="font-size:clamp(0.6rem,1vw,0.8rem);color:var(--text-secondary);margin-bottom:1.5rem">${s.body}</p>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;width:100%">
+          ${s.capabilities.map(c => `<div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:0.85rem;text-align:center">
+            <div style="font-size:1.2rem;margin-bottom:0.25rem">${c.icon}</div>
+            <div style="font-size:clamp(0.6rem,0.9vw,0.8rem);font-weight:700;margin-bottom:0.15rem">${c.title}</div>
+            <div style="font-size:clamp(0.45rem,0.65vw,0.65rem);color:var(--text-secondary)">${c.desc}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+    if (s.type === 'chart') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <h2>${s.title}</h2>
+        <p style="font-size:clamp(0.55rem,0.85vw,0.75rem);color:var(--text-secondary);margin-bottom:0.5rem">${s.subtitle || ''}</p>
+        <div class="slide-chart" id="slide-chart"></div>
+        <div style="margin-top:0.5rem;font-size:clamp(0.4rem,0.55vw,0.6rem);color:var(--text-muted)">${s.note || ''}</div>
+      </div>`;
+    }
+    if (s.type === 'market') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <h2>${s.title}</h2>
+        <p style="font-size:clamp(0.6rem,1vw,0.8rem);color:var(--text-secondary);margin-bottom:1.5rem">${s.body}</p>
+        <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:0.75rem;width:100%">
+          ${s.marketStats.map(ms => `<div style="text-align:center">
+            <div style="font-size:clamp(1rem,1.8vw,1.6rem);font-weight:800;color:${ms.color || 'var(--accent3)'}">${ms.value}</div>
+            <div style="font-size:clamp(0.45rem,0.65vw,0.7rem);color:var(--text-secondary);margin-top:0.15rem">${ms.label}</div>
+            <div style="font-size:clamp(0.35rem,0.5vw,0.55rem);color:var(--text-muted);margin-top:0.1rem">— ${ms.source}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+    if (s.type === 'testimonials') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <h2>${s.title}</h2>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;width:100%;max-height:65%">
+          ${s.testimonials.map(t => `<div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:1.25rem;display:flex;flex-direction:column">
+            <div style="font-size:clamp(0.55rem,0.85vw,0.8rem);color:var(--text-secondary);line-height:1.6;font-style:italic;flex:1">"${t.quote}"</div>
+            <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border)">
+              <div style="font-size:clamp(0.55rem,0.8vw,0.75rem);font-weight:700;color:var(--text-primary)">${t.author}</div>
+              <div style="font-size:clamp(0.45rem,0.65vw,0.65rem);color:var(--text-muted)">${t.role}</div>
+            </div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+    if (s.type === 'closing') {
+      return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
+        <div class="slide-decor-circle" style="width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(0,212,255,0.06)"></div>
+        <div class="slide-decor-circle" style="width:200px;height:200px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(123,97,255,0.06)"></div>
+        <h2 style="position:relative;z-index:1">${s.title}</h2>
+        <p style="position:relative;z-index:1">${s.subtitle}</p>
+        <div style="position:relative;z-index:1;margin-top:1.25rem;padding:0.6rem 1.75rem;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-weight:600;font-size:clamp(0.7rem,1vw,0.95rem)">${s.cta}</div>
+        ${s.contact ? `<div style="position:relative;z-index:1;margin-top:1rem;font-size:clamp(0.5rem,0.75vw,0.7rem);color:var(--text-muted)">${s.contact}</div>` : ''}
+      </div>`;
+    }
+    return '';
+  }).join('');
+
+  container.innerHTML = `
+    <div class="slide-viewer" id="slide-viewer">
+      ${slidesHTML}
+      <div class="slide-progress"><div class="slide-progress-bar" id="progress-bar" style="width:${(100 / slides.length)}%"></div></div>
+    </div>
+    <div class="slide-nav">
+      <button class="slide-nav-btn" onclick="prevSlide()">&#8592;</button>
+      <div class="slide-dots" id="slide-dots">
+        ${slides.map((_, i) => `<div class="slide-dot ${i === 0 ? 'active' : ''}" onclick="goToSlide(${i})"></div>`).join('')}
+      </div>
+      <span class="slide-counter"><span id="slide-current">1</span> / ${slides.length}</span>
+      <button class="slide-nav-btn" onclick="nextSlide()">&#8594;</button>
+    </div>
+  `;
+
+  window.nextSlide = () => {
+    if (currentSlide < slides.length - 1) goToSlide(currentSlide + 1);
+  };
+  window.prevSlide = () => {
+    if (currentSlide > 0) goToSlide(currentSlide - 1);
+  };
+  window.goToSlide = (i) => {
+    document.querySelectorAll('.slide-viewer .slide').forEach((s, idx) => {
+      s.classList.toggle('active', idx === i);
+    });
+    document.querySelectorAll('.slide-dot').forEach((d, idx) => {
+      d.classList.toggle('active', idx === i);
+    });
+    document.getElementById('slide-current').textContent = i + 1;
+    document.getElementById('progress-bar').style.width = ((i + 1) / slides.length * 100) + '%';
+    currentSlide = i;
+
+    if (slides[i].chart === 'revenue-breakdown') drawSlideChart();
+  };
+
+  // Keyboard navigation
+  _slideKeydown = (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') nextSlide();
+    if (e.key === 'ArrowLeft') prevSlide();
+  };
+  document.addEventListener('keydown', _slideKeydown);
+
+  // Store cleanup function
+  window._presentationCleanup = () => {
+    if (_slideKeydown) document.removeEventListener('keydown', _slideKeydown);
+  };
+}
+
+function drawSlideChart() {
+  const el = document.getElementById('slide-chart');
+  if (!el || el.children.length > 0) return;
+
+  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+  const onPrem = [12, 18, 24, 22, 30, 35, 28, 38, 42, 48, 52, 61];
+  const facility = [8, 12, 15, 18, 20, 25, 30, 32, 35, 38, 42, 48];
+
+  const w = el.clientWidth || 400, h = 200;
+  const svgNS = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(svgNS, 'svg');
+  svg.setAttribute('viewBox', `0 0 ${w} ${h}`);
+  svg.setAttribute('width', w);
+  svg.setAttribute('height', h);
+  svg.style.width = '100%';
+  svg.style.height = '100%';
+
+  const pad = { top: 20, right: 20, bottom: 30, left: 45 };
+  const cw = w - pad.left - pad.right, ch = h - pad.top - pad.bottom;
+  const maxVal = 70;
+  const groupW = cw / 12;
+
+  function makePath(data, offset, color) {
+    let d = `M${pad.left},${pad.top + ch}`;
+    data.forEach((v, i) => {
+      const x = pad.left + i * groupW + groupW / 2;
+      const y = pad.top + ch - (v / maxVal) * ch;
+      if (i === 0) d += ` L${x},${y}`;
+      else {
+        const px = pad.left + (i - 1) * groupW + groupW / 2;
+        const py = pad.top + ch - (data[i - 1] / maxVal) * ch;
+        const cpx = (px + x) / 2;
+        d += ` C${cpx},${py} ${cpx},${y} ${x},${y}`;
+      }
+    });
+    d += ` L${pad.left + 11 * groupW + groupW / 2},${pad.top + ch} Z`;
+    const path = document.createElementNS(svgNS, 'path');
+    path.setAttribute('d', d);
+    path.setAttribute('fill', color);
+    path.setAttribute('opacity', '0.15');
+    svg.appendChild(path);
+
+    // Line
+    let lineD = `M${pad.left},${pad.top + ch - (data[0] / maxVal) * ch}`;
+    data.forEach((v, i) => {
+      if (i === 0) return;
+      const x = pad.left + i * groupW + groupW / 2;
+      const y = pad.top + ch - (v / maxVal) * ch;
+      const px = pad.left + (i - 1) * groupW + groupW / 2;
+      const py = pad.top + ch - (data[i - 1] / maxVal) * ch;
+      const cpx = (px + x) / 2;
+      lineD += ` C${cpx},${py} ${cpx},${y} ${x},${y}`;
+    });
+    const line = document.createElementNS(svgNS, 'path');
+    line.setAttribute('d', lineD);
+    line.setAttribute('fill', 'none');
+    line.setAttribute('stroke', color);
+    line.setAttribute('stroke-width', '2');
+    svg.appendChild(line);
+
+    // Dots
+    data.forEach((v, i) => {
+      const x = pad.left + i * groupW + groupW / 2;
+      const y = pad.top + ch - (v / maxVal) * ch;
+      const dot = document.createElementNS(svgNS, 'circle');
+      dot.setAttribute('cx', x); dot.setAttribute('cy', y); dot.setAttribute('r', '2.5');
+      dot.setAttribute('fill', color);
+      svg.appendChild(dot);
+    });
+  }
+
+  // Grid
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (ch * i / 4);
+    const line = document.createElementNS(svgNS, 'line');
+    line.setAttribute('x1', pad.left); line.setAttribute('x2', w - pad.right);
+    line.setAttribute('y1', y); line.setAttribute('y2', y);
+    line.setAttribute('stroke', 'rgba(255,255,255,0.05)');
+    line.setAttribute('stroke-width', '1');
+    svg.appendChild(line);
+
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttribute('x', pad.left - 5); text.setAttribute('y', y + 3);
+    text.setAttribute('text-anchor', 'end');
+    text.setAttribute('fill', 'rgba(255,255,255,0.25)');
+    text.setAttribute('font-size', '8');
+    text.setAttribute('font-family', 'JetBrains Mono');
+    text.textContent = Math.round(maxVal * (4 - i) / 4);
+    svg.appendChild(text);
+  }
+
+  // Labels
+  months.forEach((m, i) => {
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttribute('x', pad.left + i * groupW + groupW / 2);
+    text.setAttribute('y', h - 5);
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('fill', 'rgba(255,255,255,0.3)');
+    text.setAttribute('font-size', '7');
+    text.setAttribute('font-family', 'Inter');
+    text.textContent = m;
+    svg.appendChild(text);
+  });
+
+  makePath(onPrem, 0, '#00d4ff');
+  makePath(facility, 1, '#7b61ff');
+
+  // Legend
+  const legends = [{ label: 'On-Premise', color: '#00d4ff' }, { label: 'Meridian Facility (DEMO)', color: '#7b61ff' }];
+  legends.forEach((l, i) => {
+    const g = document.createElementNS(svgNS, 'g');
+    const rect = document.createElementNS(svgNS, 'rect');
+    rect.setAttribute('x', w - 200 + i * 110); rect.setAttribute('y', 5);
+    rect.setAttribute('width', 8); rect.setAttribute('height', 8); rect.setAttribute('rx', 2);
+    rect.setAttribute('fill', l.color);
+    g.appendChild(rect);
+    const text = document.createElementNS(svgNS, 'text');
+    text.setAttribute('x', w - 188 + i * 110); text.setAttribute('y', 13);
+    text.setAttribute('fill', 'rgba(255,255,255,0.5)');
+    text.setAttribute('font-size', '8');
+    text.setAttribute('font-family', 'Inter');
+    text.textContent = l.label;
+    g.appendChild(text);
+    svg.appendChild(g);
+  });
+
+  el.appendChild(svg);
+}
+
+</script>
+
+</body>
+</html>
