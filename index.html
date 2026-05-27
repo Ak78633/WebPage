@@ -1315,10 +1315,7 @@ function initClothDemo() {
   for (let warmup = 0; warmup < 100; warmup++) {
     // Integrate (apply velocity + gravity)
     for (const p of points) {
-      if (p.pinned) {
-        p.x = offsetX + (p.y - offsetY) * 0; // keep original X for pinned
-        continue;
-      }
+      if (p.pinned) continue;
       const vx = (p.x - p.oldX) * damping;
       const vy = (p.y - p.oldY) * damping;
       p.oldX = p.x;
@@ -1441,13 +1438,7 @@ function initClothDemo() {
     // Integrate
     for (const p of points) {
       if (p === dragging) continue;
-      if (p.pinned) {
-        // Pinned points: force back to their rest position
-        const col = p.x - offsetX;
-        const rowIdx = Math.round((p.y - offsetY) / spacing);
-        // Just keep them where they are
-        continue;
-      }
+      if (p.pinned) continue;
       const vx = (p.x - p.oldX) * damping;
       const vy = (p.y - p.oldY) * damping;
       p.oldX = p.x;
