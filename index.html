@@ -580,6 +580,31 @@
       border-radius:50%;border:1px solid rgba(76,150,114,0.08);
     }
 
+    /* ===== WHY NORDBLOCK ===== */
+    .why-section{position:relative;overflow:hidden}
+    .why-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:3rem}
+    .why-item{
+      display:flex;gap:1.25rem;align-items:flex-start;
+      padding:2rem;border-radius:var(--radius-lg);
+      background:var(--bg-card);border:1px solid var(--border);
+      transition:all 0.4s;
+      box-shadow:0 1px 3px rgba(47,56,51,0.06);
+    }
+    .why-item:hover{
+      border-color:rgba(76,150,114,0.2);
+      background:var(--bg-card-hover);
+      transform:translateY(-3px);
+      box-shadow:0 10px 35px rgba(47,56,51,0.07);
+    }
+    .why-icon{
+      width:48px;height:48px;border-radius:12px;flex-shrink:0;
+      display:flex;align-items:center;justify-content:center;
+      font-size:1.5rem;
+      background:rgba(76,150,114,0.08);border:1px solid rgba(76,150,114,0.15);
+    }
+    .why-item h3{font-size:1.1rem;font-weight:700;margin-bottom:0.4rem}
+    .why-item p{color:var(--text-secondary);font-size:0.9rem;line-height:1.65}
+
     /* ===== RESPONSIVE ===== */
     @media(max-width:900px){
       .deploy-grid,.contact-grid{grid-template-columns:1fr}
@@ -597,6 +622,7 @@
       .hero{padding:7rem 1.25rem 3rem}
       .powered-logos{gap:2rem}
       .demo-body{padding:2rem 1.25rem;font-size:0.75rem}
+      .why-grid{grid-template-columns:1fr}
     }
   </style>
 </head>
@@ -719,6 +745,61 @@
           <span class="service-tag">Updates</span>
           <span class="service-tag">Monitoring</span>
           <span class="service-tag">Support</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===== WHY NORDBLOCK ===== -->
+<section class="why-section" id="why">
+  <div class="container">
+    <div class="reveal">
+      <div class="section-label">Why Nordblock</div>
+      <h2 class="section-title">What Sets Us <span class="gradient">Apart</span></h2>
+      <p class="section-desc">We don't just sell hardware. We build complete local AI infrastructures you own, control, and operate independently of any cloud.</p>
+    </div>
+    <div class="why-grid">
+      <div class="why-item reveal">
+        <div class="why-icon">&#128274;</div>
+        <div>
+          <h3>Zero Data Exfiltration</h3>
+          <p>Your data never leaves the systems you control. No API calls to external services. No telemetry. No exceptions.</p>
+        </div>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-icon">&#128187;</div>
+        <div>
+          <h3>Full Hardware Ownership</h3>
+          <p>You own every component we install. No rented cloud instances. No hidden recurring fees for compute.</p>
+        </div>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-icon">&#128736;</div>
+        <div>
+          <h3>End-to-End Setup</h3>
+          <p>From hardware procurement to model fine-tuning, we handle the entire pipeline so your team can focus on outcomes.</p>
+        </div>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-icon">&#128640;</div>
+        <div>
+          <h3>Enterprise Performance</h3>
+          <p>Purpose-built GPU clusters with NVLink, high-bandwidth memory, and optimized networking for LLM workloads.</p>
+        </div>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-icon">&#9881;</div>
+        <div>
+          <h3>Ongoing Managed Support</h3>
+          <p>Continuous monitoring, model updates, and hardware maintenance. Your infrastructure always runs at peak performance.</p>
+        </div>
+      </div>
+      <div class="why-item reveal">
+        <div class="why-icon">&#127760;</div>
+        <div>
+          <h3>Finland-Based &amp; GDPR-Ready</h3>
+          <p>EU-based company operating under strict data protection laws. Your compliance is built in, not bolted on.</p>
         </div>
       </div>
     </div>
