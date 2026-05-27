@@ -1,0 +1,45 @@
+{
+  "agent": {
+    "orchestrator": {
+      "model": "qwen-q8/qwen3.6-35b-q8",
+      "options": {},
+      "permission": {}
+    },
+    "oracle": {
+      "model": "qwen-q8/qwen3.6-35b-q8",
+      "options": {},
+      "permission": {}
+    },
+    "council": {
+      "model": "qwen-q8/qwen3.6-35b-q8",
+      "options": {},
+      "permission": {}
+    },
+    "librarian": {
+      "model": "qwen-q8/qwen3.6-35b-q8",
+      "options": {},
+      "permission": {}
+    },
+    "explorer": {
+      "model": "qwen-q8/qwen3.6-35b-q8",
+      "options": {},
+      "permission": {}
+    },
+    "designer": {
+      "model": "qwen-q8/qwen3.6-35b-q8",
+      "options": {},
+      "permission": {}
+    },
+    "fixer": {
+      "model": "qwen-q8/qwen3.6-35b-q8",
+      "options": {},
+      "permission": {}
+    },
+    "observer": {
+      "model": "qwen-q8/qwen3.6-35b-q8",
+      "options": {},
+      "permission": {}
+    }
+  },
+  "$schema": "https://opencode.ai/config.json"
+}

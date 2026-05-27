@@ -5,23 +5,24 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Nordblock — Local AI Infrastructure</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
   <style>
     *,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
     :root{
-      --bg-primary:#06080f;
-      --bg-secondary:#0a0e1a;
-      --bg-card:#0d1220;
-      --bg-card-hover:#111828;
-      --accent:#00d4ff;
-      --accent2:#7b61ff;
-      --accent3:#00ff88;
-      --text-primary:#e8ecf4;
-      --text-secondary:#8892a8;
-      --text-muted:#4a5568;
-      --border:rgba(0,212,255,0.08);
-      --glow:rgba(0,212,255,0.15);
-      --glow2:rgba(123,97,255,0.15);
+      --bg-primary:#FFFFFF;
+      --bg-secondary:#F7F8F6;
+      --bg-card:#FFFFFF;
+      --bg-card-hover:#FAFBF9;
+      --nordblock-hero:url(assets/images/hero-bg-nordblock.png) center/cover no-repeat;
+      --accent:#4C9672;
+      --accent2:#8BB8D2;
+      --accent3:#FF5E00;
+      --text-primary:#2F3833;
+      --text-secondary:#5C6B63;
+      --text-muted:#8A9A91;
+      --border:rgba(47,56,51,0.08);
+      --glow:rgba(76,150,114,0.12);
+      --glow2:rgba(139,184,210,0.12);
       --radius:12px;
       --radius-lg:20px;
     }
@@ -37,7 +38,7 @@
 
     /* ===== SCROLLBAR ===== */
     ::-webkit-scrollbar{width:6px}
-    ::-webkit-scrollbar-track{background:var(--bg-primary)}
+    ::-webkit-scrollbar-track{background:var(--bg-secondary)}
     ::-webkit-scrollbar-thumb{background:var(--accent);border-radius:3px}
 
     /* ===== NAVIGATION ===== */
@@ -45,19 +46,16 @@
       position:fixed;top:0;left:0;right:0;z-index:100;
       padding:1rem 2rem;
       display:flex;align-items:center;justify-content:space-between;
-      background:rgba(6,8,15,0.8);
+      background:rgba(255,255,255,0.85);
       backdrop-filter:blur(20px);
       border-bottom:1px solid var(--border);
       transition:all 0.3s ease;
     }
-    nav.scrolled{padding:0.6rem 2rem;background:rgba(6,8,15,0.95)}
+    nav.scrolled{padding:0.6rem 2rem;background:rgba(255,255,255,0.95);box-shadow:0 1px 10px rgba(47,56,51,0.06)}
     .nav-logo{
-      font-size:1.5rem;font-weight:800;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      -webkit-background-clip:text;-webkit-text-fill-color:transparent;
-      letter-spacing:-0.5px;
+      display:flex;align-items:center;height:44px;
     }
-    .nav-logo span{font-weight:400;opacity:0.7}
+    .nav-logo img{height:44px;width:auto;display:block}
     .nav-links{display:flex;gap:2rem;list-style:none}
     .nav-links a{
       color:var(--text-secondary);text-decoration:none;font-size:0.9rem;
@@ -70,9 +68,9 @@
     .nav-links a:hover{color:var(--text-primary)}
     .nav-links a:hover::after{width:100%}
     .nav-cta{
-      padding:0.5rem 1.25rem;border-radius:8px;font-size:0.85rem;font-weight:600;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:var(--bg-primary);border:none;cursor:pointer;text-decoration:none;
+      padding:0.5rem 1.5rem;border-radius:50px;font-size:0.85rem;font-weight:600;
+      background:linear-gradient(135deg,var(--accent),#3A7A5B);
+      color:#FFFFFF;border:none;cursor:pointer;text-decoration:none;
       transition:transform 0.3s,box-shadow 0.3s;
     }
     .nav-cta:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow)}
@@ -83,11 +81,18 @@
     .hero{
       position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;
       text-align:center;padding:8rem 2rem 4rem;overflow:hidden;
+      background:var(--nordblock-hero);
+    }
+    .hero::before{
+      content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+      background:rgba(20,25,22,0.5);z-index:1;
     }
     #particles-canvas{position:absolute;top:0;left:0;width:100%;height:100%;z-index:0}
+    .hero-content{position:relative;z-index:2}
+    .hero-glow{z-index:1}
     .hero-glow{
       position:absolute;width:600px;height:600px;border-radius:50%;
-      filter:blur(120px);opacity:0.3;pointer-events:none;z-index:0;
+      filter:blur(120px);opacity:0.08;pointer-events:none;z-index:0;
     }
     .hero-glow.glow1{top:-200px;left:-100px;background:var(--accent)}
     .hero-glow.glow2{bottom:-200px;right:-100px;background:var(--accent2)}
@@ -95,7 +100,7 @@
     .hero-badge{
       display:inline-flex;align-items:center;gap:0.5rem;
       padding:0.4rem 1rem;border-radius:50px;
-      background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);
+      background:rgba(76,150,114,0.08);border:1px solid rgba(76,150,114,0.2);
       font-size:0.8rem;color:var(--accent);font-weight:500;margin-bottom:2rem;
     }
     .hero-badge .dot{width:6px;height:6px;border-radius:50%;background:var(--accent3);animation:pulse 2s infinite}
@@ -105,7 +110,7 @@
       margin-bottom:1.5rem;letter-spacing:-2px;
     }
     .hero h1 .gradient{
-      background:linear-gradient(135deg,var(--accent) 0%,var(--accent2) 50%,var(--accent3) 100%);
+      background:linear-gradient(135deg,var(--accent2) 0%,var(--accent) 50%,var(--accent3) 100%);
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;
       background-size:200% 200%;animation:gradient-shift 4s ease infinite;
     }
@@ -116,21 +121,21 @@
     }
     .hero-buttons{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap}
     .btn-primary{
-      padding:0.9rem 2rem;border-radius:10px;font-size:1rem;font-weight:600;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:var(--bg-primary);border:none;cursor:pointer;
+      padding:0.9rem 2rem;border-radius:50px;font-size:1rem;font-weight:600;
+      background:linear-gradient(135deg,var(--accent),#3A7A5B);
+      color:#FFFFFF;border:none;cursor:pointer;
       transition:transform 0.3s,box-shadow 0.3s;text-decoration:none;
       display:inline-flex;align-items:center;gap:0.5rem;
     }
     .btn-primary:hover{transform:translateY(-3px);box-shadow:0 12px 40px var(--glow)}
     .btn-secondary{
-      padding:0.9rem 2rem;border-radius:10px;font-size:1rem;font-weight:600;
-      background:transparent;color:var(--text-primary);
-      border:1px solid var(--border);cursor:pointer;
+      padding:0.9rem 2rem;border-radius:50px;font-size:1rem;font-weight:600;
+      background:transparent;color:var(--accent);
+      border:1.5px solid rgba(76,150,114,0.3);cursor:pointer;
       transition:all 0.3s;text-decoration:none;
       display:inline-flex;align-items:center;gap:0.5rem;
     }
-    .btn-secondary:hover{border-color:var(--accent);background:rgba(0,212,255,0.05)}
+    .btn-secondary:hover{border-color:var(--accent);background:rgba(76,150,114,0.04);color:var(--accent)}
 
     /* ===== SECTIONS ===== */
     section{padding:6rem 2rem}
@@ -139,7 +144,6 @@
       display:inline-flex;align-items:center;gap:0.5rem;
       font-size:0.8rem;font-weight:600;color:var(--accent);
       text-transform:uppercase;letter-spacing:2px;margin-bottom:1rem;
-      font-family:'JetBrains Mono',monospace;
     }
     .section-label::before{content:'';width:20px;height:1px;background:var(--accent)}
     .section-title{
@@ -149,7 +153,13 @@
     .section-desc{color:var(--text-secondary);font-size:1.1rem;max-width:600px;line-height:1.8}
 
     /* ===== SERVICES ===== */
-    .services{background:var(--bg-secondary)}
+    .services{background:var(--bg-secondary);position:relative;overflow:hidden}
+    .services::before{
+      content:'';position:absolute;top:0;left:0;right:0;bottom:0;
+      background:url(assets/images/pattern-bg.png) repeat,rgba(247,248,246,0.9);
+      pointer-events:none;z-index:0;
+    }
+    .services>*{position:relative;z-index:1}
     .services-grid{
       display:grid;grid-template-columns:repeat(auto-fit,minmax(340px,1fr));
       gap:1.5rem;margin-top:3rem;
@@ -158,32 +168,33 @@
       background:var(--bg-card);border:1px solid var(--border);
       border-radius:var(--radius-lg);padding:2.5rem;
       transition:all 0.4s ease;position:relative;overflow:hidden;
+      box-shadow:0 1px 3px rgba(47,56,51,0.06);
     }
     .service-card::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:2px;
-      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
+      background:linear-gradient(90deg,var(--accent),#3A7A5B);
       opacity:0;transition:opacity 0.4s;
     }
     .service-card:hover{
-      border-color:rgba(0,212,255,0.2);
+      border-color:rgba(76,150,114,0.2);
       background:var(--bg-card-hover);
       transform:translateY(-4px);
-      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+      box-shadow:0 12px 40px rgba(47,56,51,0.08);
     }
     .service-card:hover::before{opacity:1}
     .service-icon{
       width:56px;height:56px;border-radius:14px;
       display:flex;align-items:center;justify-content:center;
       font-size:1.5rem;margin-bottom:1.5rem;
-      background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);
+      background:rgba(76,150,114,0.08);border:1px solid rgba(76,150,114,0.15);
     }
     .service-card h3{font-size:1.3rem;font-weight:700;margin-bottom:0.75rem}
     .service-card p{color:var(--text-secondary);font-size:0.95rem;line-height:1.7}
     .service-tags{display:flex;gap:0.5rem;flex-wrap:wrap;margin-top:1.25rem}
     .service-tag{
       padding:0.25rem 0.75rem;border-radius:50px;font-size:0.75rem;
-      background:rgba(0,212,255,0.06);color:var(--accent);
-      border:1px solid rgba(0,212,255,0.1);font-weight:500;
+      background:rgba(76,150,114,0.06);color:var(--accent);
+      border:1px solid rgba(76,150,114,0.1);font-weight:500;
     }
 
     /* ===== DEPLOYMENT OPTIONS ===== */
@@ -193,10 +204,12 @@
       background:var(--bg-card);border:1px solid var(--border);
       border-radius:var(--radius-lg);padding:3rem;position:relative;
       overflow:hidden;transition:all 0.4s;
+      box-shadow:0 1px 3px rgba(47,56,51,0.06);
     }
     .deploy-card:hover{
-      border-color:rgba(0,212,255,0.2);
-      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+      border-color:rgba(76,150,114,0.2);
+      box-shadow:0 12px 40px rgba(47,56,51,0.08);
+      transform:translateY(-4px);
     }
     .deploy-card .deploy-icon{
       font-size:2.5rem;margin-bottom:1.5rem;
@@ -210,9 +223,17 @@
       color:var(--text-secondary);font-size:0.9rem;
     }
     .deploy-features li::before{
-      content:'\2713';color:var(--accent3);font-weight:700;
+      content:'\2713';color:var(--accent);font-weight:700;
       flex-shrink:0;margin-top:1px;
     }
+    .section-illustration{
+      max-width:600px;margin:3rem auto 0;text-align:center;
+    }
+    .section-illustration img{
+      max-width:100%;height:auto;border-radius:var(--radius-lg);
+      box-shadow:0 20px 60px rgba(47,56,51,0.1);
+    }
+    .contact-illustration{margin-top:4rem}
 
     /* ===== SECURITY ===== */
     .security{background:var(--bg-secondary);position:relative}
@@ -222,11 +243,12 @@
       border-radius:var(--radius-lg);
       background:var(--bg-card);border:1px solid var(--border);
       transition:all 0.4s;
+      box-shadow:0 1px 3px rgba(47,56,51,0.06);
     }
     .security-item:hover{
-      border-color:rgba(0,255,136,0.2);
+      border-color:rgba(76,150,114,0.2);
       transform:translateY(-4px);
-      box-shadow:0 20px 60px rgba(0,0,0,0.3);
+      box-shadow:0 12px 40px rgba(47,56,51,0.08);
     }
     .security-icon{
       font-size:2.5rem;margin-bottom:1.25rem;display:block;
@@ -239,11 +261,11 @@
       text-align:center;padding:4rem 2rem 3rem;
       border-top:1px solid var(--border);
       border-bottom:1px solid var(--border);
+      background:var(--bg-secondary);
     }
     .powered-label{
       font-size:0.8rem;color:var(--text-muted);text-transform:uppercase;
       letter-spacing:2px;font-weight:600;margin-bottom:2rem;
-      font-family:'JetBrains Mono',monospace;
     }
     .powered-logos{
       display:flex;align-items:center;justify-content:center;
@@ -265,19 +287,20 @@
       max-width:800px;margin:3rem auto 0;
       background:var(--bg-card);border:1px solid var(--border);
       border-radius:var(--radius-lg);overflow:hidden;
+      box-shadow:0 1px 3px rgba(47,56,51,0.06);
     }
     .demo-header{
       display:flex;align-items:center;gap:0.5rem;
-      padding:1rem 1.5rem;background:rgba(0,0,0,0.3);
+      padding:1rem 1.5rem;background:var(--bg-secondary);
       border-bottom:1px solid var(--border);
     }
     .demo-dot{width:10px;height:10px;border-radius:50%}
     .demo-dot:nth-child(1){background:#ff5f57}
-    .demo-dot:nth-child(2){background:#ffbd2e}
+    .demo-dot:nth-child(2){background:#E6A800}
     .demo-dot:nth-child(3){background:#28c840}
     .demo-body{
       padding:3rem 2rem;
-      font-family:'JetBrains Mono',monospace;
+      font-family:'Inter',monospace;
       font-size:0.85rem;color:var(--text-secondary);
       text-align:left;
       min-height:300px;
@@ -305,7 +328,7 @@
     .stat{text-align:center}
     .stat-value{
       font-size:clamp(2rem,4vw,3rem);font-weight:900;
-      background:linear-gradient(135deg,var(--accent),var(--accent3));
+      background:linear-gradient(135deg,var(--accent),#3A7A5B);
       -webkit-background-clip:text;-webkit-text-fill-color:transparent;
     }
     .stat-label{color:var(--text-secondary);font-size:0.9rem;margin-top:0.25rem}
@@ -313,11 +336,12 @@
     /* ===== CTA SECTION ===== */
     .cta-section{
       text-align:center;padding:8rem 2rem;position:relative;overflow:hidden;
+      background:linear-gradient(180deg,#F7F8F6 0%,#FFFFFF 50%);
     }
     .cta-section::before{
       content:'';position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
       width:500px;height:500px;border-radius:50%;
-      background:radial-gradient(circle,rgba(0,212,255,0.08),transparent 70%);
+      background:radial-gradient(circle,rgba(76,150,114,0.06),transparent 70%);
       pointer-events:none;
     }
     .cta-section h2{
@@ -334,7 +358,7 @@
     .contact-icon{
       width:44px;height:44px;border-radius:10px;flex-shrink:0;
       display:flex;align-items:center;justify-content:center;
-      background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.15);
+      background:rgba(76,150,114,0.08);border:1px solid rgba(76,150,114,0.15);
       font-size:1.1rem;
     }
     .contact-item h4{font-size:0.95rem;font-weight:600;margin-bottom:0.25rem}
@@ -343,21 +367,22 @@
     .contact-form{
       background:var(--bg-card);border:1px solid var(--border);
       border-radius:var(--radius-lg);padding:2.5rem;
+      box-shadow:0 1px 3px rgba(47,56,51,0.06);
     }
     .form-group{margin-bottom:1.25rem}
     .form-group label{display:block;font-size:0.85rem;font-weight:500;margin-bottom:0.5rem;color:var(--text-secondary)}
     .form-group input,.form-group textarea{
       width:100%;padding:0.8rem 1rem;border-radius:8px;
-      background:var(--bg-primary);border:1px solid var(--border);
+      background:var(--bg-secondary);border:1px solid var(--border);
       color:var(--text-primary);font-family:inherit;font-size:0.9rem;
       transition:border-color 0.3s;outline:none;
     }
     .form-group input:focus,.form-group textarea:focus{border-color:var(--accent)}
     .form-group textarea{resize:vertical;min-height:120px}
     .form-submit{
-      width:100%;padding:0.9rem;border-radius:10px;font-size:1rem;font-weight:600;
-      background:linear-gradient(135deg,var(--accent),var(--accent2));
-      color:var(--bg-primary);border:none;cursor:pointer;
+      width:100%;padding:0.9rem;border-radius:50px;font-size:1rem;font-weight:600;
+      background:linear-gradient(135deg,var(--accent),#3A7A5B);
+      color:#FFFFFF;border:none;cursor:pointer;
       transition:transform 0.3s,box-shadow 0.3s;
     }
     .form-submit:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow)}
@@ -366,6 +391,7 @@
     footer{
       padding:3rem 2rem;border-top:1px solid var(--border);
       text-align:center;
+      background:var(--bg-primary);
     }
     .footer-content{max-width:1200px;margin:0 auto}
     .footer-links{display:flex;justify-content:center;gap:2rem;margin-bottom:1.5rem;flex-wrap:wrap}
@@ -382,17 +408,17 @@
     .grid-bg{
       position:absolute;top:0;left:0;width:100%;height:100%;
       background-image:
-        linear-gradient(rgba(0,212,255,0.03) 1px,transparent 1px),
-        linear-gradient(90deg,rgba(0,212,255,0.03) 1px,transparent 1px);
+        linear-gradient(rgba(47,56,51,0.03) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(47,56,51,0.03) 1px,transparent 1px);
       background-size:60px 60px;
       pointer-events:none;
     }
 
     /* ===== AI NOTICE ===== */
     .ai-notice{
-      background:linear-gradient(90deg,rgba(0,255,136,0.08),rgba(0,212,255,0.08),rgba(123,97,255,0.08));
-      border-top:1px solid rgba(0,255,136,0.2);
-      border-bottom:1px solid rgba(0,255,136,0.2);
+      background:linear-gradient(90deg,rgba(76,150,114,0.04),rgba(139,184,210,0.04));
+      border-top:1px solid rgba(76,150,114,0.1);
+      border-bottom:1px solid rgba(76,150,114,0.1);
       padding:1.5rem 2rem;
     }
     .ai-notice-content{
@@ -400,7 +426,7 @@
       font-size:0.85rem;color:var(--text-secondary);
     }
     .ai-notice-icon{font-size:1.25rem;flex-shrink:0}
-    .ai-notice-text strong{color:var(--accent3)}
+    .ai-notice-text strong{color:var(--accent)}
 
     /* ===== DEMO SELECTION ===== */
     .demo-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;margin-top:3rem}
@@ -409,18 +435,19 @@
       border-radius:var(--radius-lg);padding:2.5rem 2rem;
       text-align:center;cursor:pointer;transition:all 0.4s;
       position:relative;overflow:hidden;
+      box-shadow:0 1px 3px rgba(47,56,51,0.06);
     }
     .demo-card::before{
-      content:'';position:absolute;top:0;left:0;right:0;height:2px;
+      content:'';position:absolute;top:0;left:0;right:0;height:3px;
       opacity:0;transition:opacity 0.4s;
     }
     .demo-card:nth-child(1)::before{background:linear-gradient(90deg,var(--accent),var(--accent2))}
     .demo-card:nth-child(2)::before{background:linear-gradient(90deg,var(--accent2),var(--accent3))}
     .demo-card:nth-child(3)::before{background:linear-gradient(90deg,var(--accent3),var(--accent))}
     .demo-card:hover{
-      border-color:rgba(0,212,255,0.2);
+      border-color:rgba(76,150,114,0.2);
       transform:translateY(-6px);
-      box-shadow:0 20px 60px rgba(0,0,0,0.4);
+      box-shadow:0 12px 40px rgba(47,56,51,0.08);
     }
     .demo-card:hover::before{opacity:1}
     .demo-card-icon{font-size:3rem;margin-bottom:1.25rem;display:block}
@@ -436,7 +463,7 @@
     /* ===== DEMO MODAL ===== */
     .demo-modal{
       display:none;position:fixed;top:0;left:0;right:0;bottom:0;
-      z-index:1000;background:rgba(0,0,0,0.9);
+      z-index:1000;background:rgba(255,255,255,0.95);
       backdrop-filter:blur(10px);
       flex-direction:column;
     }
@@ -444,17 +471,17 @@
     .demo-modal-header{
       display:flex;align-items:center;justify-content:space-between;
       padding:1rem 2rem;border-bottom:1px solid var(--border);
-      background:rgba(6,8,15,0.95);
+      background:rgba(255,255,255,0.95);
     }
     .demo-modal-title{font-size:1rem;font-weight:700;color:var(--text-primary)}
     .demo-modal-close{
       width:36px;height:36px;border-radius:8px;
-      background:rgba(255,255,255,0.05);border:1px solid var(--border);
+      background:rgba(47,56,51,0.05);border:1px solid var(--border);
       color:var(--text-secondary);font-size:1.2rem;cursor:pointer;
       display:flex;align-items:center;justify-content:center;
       transition:all 0.3s;
     }
-    .demo-modal-close:hover{background:rgba(255,60,60,0.15);border-color:rgba(255,60,60,0.3);color:#ff4444}
+    .demo-modal-close:hover{background:rgba(255,60,60,0.1);border-color:rgba(255,60,60,0.2);color:#ff4444}
     .demo-modal-body{flex:1;display:flex;align-items:center;justify-content:center;padding:2rem;overflow:auto}
     .demo-canvas-container{
       width:100%;max-width:900px;aspect-ratio:16/9;
@@ -466,8 +493,9 @@
     /* ===== CLOTH DEMO ===== */
     .cloth-hint{
       position:absolute;bottom:1rem;left:50%;transform:translateX(-50%);
-      color:var(--text-muted);font-size:0.75rem;font-family:'JetBrains Mono',monospace;
-      background:rgba(0,0,0,0.5);padding:0.4rem 1rem;border-radius:50px;
+      color:var(--text-muted);font-size:0.75rem;
+      background:rgba(255,255,255,0.8);padding:0.4rem 1rem;border-radius:50px;
+      border:1px solid var(--border);
     }
 
     /* ===== DATA ANALYSIS DEMO ===== */
@@ -476,7 +504,7 @@
     .analysis-subtitle{color:var(--text-secondary);font-size:0.85rem;margin-bottom:2rem}
     .analysis-grid{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem}
     .chart-box{
-      background:var(--bg-primary);border:1px solid var(--border);
+      background:var(--bg-secondary);border:1px solid var(--border);
       border-radius:var(--radius);padding:1.25rem;position:relative;
     }
     .chart-label{font-size:0.75rem;color:var(--text-muted);margin-bottom:0.75rem;font-weight:600;text-transform:uppercase;letter-spacing:1px}
@@ -486,18 +514,17 @@
       border-radius:var(--radius);padding:1.5rem;
     }
     .analysis-summary h4{font-size:0.9rem;font-weight:700;margin-bottom:0.75rem;color:var(--accent)}
-    .summary-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid rgba(255,255,255,0.04)}
+    .summary-row{display:flex;justify-content:space-between;padding:0.4rem 0;border-bottom:1px solid rgba(47,56,51,0.06)}
     .summary-row:last-child{border-bottom:none}
     .summary-label{color:var(--text-secondary);font-size:0.85rem}
-    .summary-value{font-weight:600;font-size:0.85rem;font-family:'JetBrains Mono',monospace}
-    .summary-value.positive{color:var(--accent3)}
-    .summary-value.negative{color:#ff6b6b}
+    .summary-value{font-weight:600;font-size:0.85rem}
+    .summary-value.positive{color:var(--accent)}
+    .summary-value.negative{color:var(--accent3)}
     .chart-tooltip{
       position:absolute;pointer-events:none;
-      background:rgba(6,8,15,0.95);border:1px solid var(--accent);
+      background:rgba(255,255,255,0.95);border:1px solid var(--accent);
       border-radius:6px;padding:0.4rem 0.7rem;
       font-size:0.75rem;color:var(--text-primary);
-      font-family:'JetBrains Mono',monospace;
       white-space:nowrap;z-index:10;
       display:none;
     }
@@ -505,7 +532,7 @@
     /* ===== PRESENTATION DEMO ===== */
     .presentation-container{width:100%;max-width:900px}
     .slide-viewer{
-      background:#0a0e1a;border:1px solid var(--border);
+      background:var(--bg-secondary);border:1px solid var(--border);
       border-radius:var(--radius);aspect-ratio:16/9;
       position:relative;overflow:hidden;margin-bottom:1rem;
     }
@@ -518,21 +545,21 @@
     .slide h2{font-size:clamp(1.5rem,3vw,2.5rem);font-weight:800;margin-bottom:0.5rem;text-align:center}
     .slide p{color:var(--text-secondary);font-size:clamp(0.8rem,1.5vw,1.1rem);text-align:center;max-width:600px}
     .slide-element{position:absolute}
-    .slide-1{background:linear-gradient(135deg,#0a0e1a 0%,#0d1220 40%,#0a1628 100%)}
+    .slide-1{background:linear-gradient(135deg,#FFFFFF 0%,#F7F8F6 40%,#E8F0ED 100%)}
     .slide-1 h2{background:linear-gradient(135deg,var(--accent),var(--accent2));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-    .slide-2{background:linear-gradient(135deg,#0a0e1a 0%,#0d1220 40%,#0a1628 100%)}
-    .slide-3{background:linear-gradient(135deg,#0a0e1a 0%,#0d1220 40%,#0a1628 100%)}
-    .slide-4{background:linear-gradient(135deg,#0a0e1a 0%,#0d1220 40%,#0a1628 100%)}
+    .slide-2{background:linear-gradient(135deg,#FFFFFF 0%,#F7F8F6 40%,#E8F0ED 100%)}
+    .slide-3{background:linear-gradient(135deg,#FFFFFF 0%,#F7F8F6 40%,#E8F0ED 100%)}
+    .slide-4{background:linear-gradient(135deg,#FFFFFF 0%,#F7F8F6 40%,#E8F0ED 100%)}
     .slide-chart{width:80%;max-width:500px;height:200px}
     .slide-stat-grid{display:flex;gap:2rem;margin-top:1.5rem}
     .slide-stat{text-align:center}
-    .slide-stat-val{font-size:clamp(1.5rem,2.5vw,2.2rem);font-weight:800;color:var(--accent3)}
+    .slide-stat-val{font-size:clamp(1.5rem,2.5vw,2.2rem);font-weight:800;color:var(--accent)}
     .slide-stat-lbl{font-size:clamp(0.6rem,1vw,0.8rem);color:var(--text-muted)}
     .slide-progress{
       position:absolute;bottom:0;left:0;right:0;height:3px;
-      background:rgba(255,255,255,0.05);
+      background:rgba(47,56,51,0.06);
     }
-    .slide-progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));transition:width 0.4s}
+    .slide-progress-bar{height:100%;background:linear-gradient(90deg,var(--accent),#3A7A5B);transition:width 0.4s}
     .slide-nav{display:flex;justify-content:space-between;align-items:center}
     .slide-dots{display:flex;gap:0.5rem}
     .slide-dot{
@@ -542,15 +569,15 @@
     .slide-dot.active{background:var(--accent);transform:scale(1.3)}
     .slide-nav-btn{
       width:40px;height:40px;border-radius:8px;
-      background:rgba(0,212,255,0.08);border:1px solid rgba(0,212,255,0.2);
+      background:rgba(76,150,114,0.08);border:1px solid rgba(76,150,114,0.15);
       color:var(--accent);font-size:1.1rem;cursor:pointer;
       display:flex;align-items:center;justify-content:center;
       transition:all 0.3s;
     }
-    .slide-nav-btn:hover{background:rgba(0,212,255,0.15)}
-    .slide-counter{color:var(--text-muted);font-size:0.8rem;font-family:'JetBrains Mono',monospace}
+    .slide-nav-btn:hover{background:rgba(76,150,114,0.15)}
+    .slide-counter{color:var(--text-muted);font-size:0.8rem}
     .slide-decor-circle{
-      border-radius:50%;border:1px solid rgba(0,212,255,0.1);
+      border-radius:50%;border:1px solid rgba(76,150,114,0.08);
     }
 
     /* ===== RESPONSIVE ===== */
@@ -577,7 +604,7 @@
 
 <!-- ===== NAVIGATION ===== -->
 <nav id="navbar">
-  <div class="nav-logo">NORD<span>BLOCK</span></div>
+  <img src="assets/images/nordblock-logo.svg" alt="Nordblock" class="nav-logo">
   <ul class="nav-links">
     <li><a href="#services">Services</a></li>
     <li><a href="#deployment">Deployment</a></li>
@@ -618,10 +645,10 @@
 
 <!-- ===== POWERED BY ===== -->
 <div class="powered">
-  <div class="powered-label">Built on</div>
+  <div class="powered-label">Powered by</div>
   <div class="powered-logos">
-    <div class="powered-logo"><span>OpenCode</span></div>
-    <div class="powered-logo"><span>Oh My OpenAgent</span></div>
+    <div class="powered-logo"><span>Nordblock Local AI</span></div>
+    <div class="powered-logo"><span>On-Premise Hardware</span></div>
   </div>
 </div>
 
@@ -741,6 +768,9 @@
           <li>Flexible scaling options</li>
         </ul>
       </div>
+    </div>
+    <div class="section-illustration reveal">
+      <img src="assets/images/nordblock-illustration-1.png" alt="Nordblock deployment illustration">
     </div>
   </div>
 </section>
@@ -947,6 +977,9 @@
         </form>
       </div>
     </div>
+    <div class="section-illustration contact-illustration reveal">
+      <img src="assets/images/nordblock-illustration-2.png" alt="Nordblock illustration">
+    </div>
   </div>
 </section>
 
@@ -975,8 +1008,8 @@
   const ctx = canvas.getContext('2d');
   let particles = [];
   let mouse = { x: null, y: null };
-  const PARTICLE_COUNT = 80;
-  const MAX_DIST = 120;
+  const PARTICLE_COUNT = 40;
+  const MAX_DIST = 100;
 
   function resize() {
     canvas.width = canvas.parentElement.offsetWidth;
@@ -991,8 +1024,8 @@
         y: Math.random() * canvas.height,
         vx: (Math.random() - 0.5) * 0.5,
         vy: (Math.random() - 0.5) * 0.5,
-        r: Math.random() * 2 + 0.5,
-        o: Math.random() * 0.5 + 0.2
+        r: Math.random() * 1.5 + 0.3,
+        o: Math.random() * 0.25 + 0.05
       });
     }
   }
@@ -1010,7 +1043,7 @@
 
       ctx.beginPath();
       ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
-      ctx.fillStyle = `rgba(0, 212, 255, ${p.o})`;
+      ctx.fillStyle = `rgba(76, 150, 114, ${p.o})`;
       ctx.fill();
 
       for (let j = i + 1; j < particles.length; j++) {
@@ -1022,7 +1055,7 @@
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(q.x, q.y);
-          ctx.strokeStyle = `rgba(0, 212, 255, ${0.08 * (1 - dist / MAX_DIST)})`;
+          ctx.strokeStyle = `rgba(139, 184, 210, ${0.04 * (1 - dist / MAX_DIST)})`;
           ctx.lineWidth = 0.5;
           ctx.stroke();
         }
@@ -1036,7 +1069,7 @@
           ctx.beginPath();
           ctx.moveTo(p.x, p.y);
           ctx.lineTo(mouse.x, mouse.y);
-          ctx.strokeStyle = `rgba(123, 97, 255, ${0.15 * (1 - dist / 150)})`;
+          ctx.strokeStyle = `rgba(255, 94, 0, ${0.08 * (1 - dist / 150)})`;
           ctx.lineWidth = 0.8;
           ctx.stroke();
         }
@@ -1422,23 +1455,23 @@ function initClothDemo() {
     ctx.closePath();
 
     // Fill with gradient
-    const grad = ctx.createLinearGradient(offsetX, offsetY, offsetX + (clothCols - 1) * spacing, offsetY + (clothRows - 1) * spacing);
-    grad.addColorStop(0, 'rgba(15,25,50,0.85)');
-    grad.addColorStop(0.5, 'rgba(20,30,60,0.9)');
-    grad.addColorStop(1, 'rgba(15,25,50,0.85)');
-    ctx.fillStyle = grad;
-    ctx.fill();
+     const grad = ctx.createLinearGradient(offsetX, offsetY, offsetX + (clothCols - 1) * spacing, offsetY + (clothRows - 1) * spacing);
+     grad.addColorStop(0, 'rgba(76,150,114,0.06)');
+     grad.addColorStop(0.5, 'rgba(76,150,114,0.08)');
+     grad.addColorStop(1, 'rgba(76,150,114,0.06)');
+     ctx.fillStyle = grad;
+     ctx.fill();
 
-    // Draw stick lines (cloth mesh)
-    for (const s of sticks) {
-      const pa = points[s.a];
-      const pb = points[s.b];
-      const stretch = Math.abs(s.len - Math.sqrt((pb.x - pa.x) ** 2 + (pb.y - pa.y) ** 2));
-      let alpha = 0.06;
-      let color = '0,212,255';
-      if (stretch > 2) {
-        alpha = Math.min(0.35, stretch * 0.025);
-        color = '0,255,136';
+     // Draw stick lines (cloth mesh)
+     for (const s of sticks) {
+       const pa = points[s.a];
+       const pb = points[s.b];
+       const stretch = Math.abs(s.len - Math.sqrt((pb.x - pa.x) ** 2 + (pb.y - pa.y) ** 2));
+       let alpha = 0.06;
+      let color = '76,150,114';
+        if (stretch > 2) {
+         alpha = Math.min(0.35, stretch * 0.025);
+         color = '255,94,0';
       }
       ctx.strokeStyle = `rgba(${color},${alpha})`;
       ctx.lineWidth = 0.8;
@@ -1513,7 +1546,7 @@ function initAnalysisDemo() {
 
     <div style="margin-bottom:1.5rem">
       <div class="chart-label">Source Data (CSV Preview)</div>
-      <pre id="csv-preview" style="background:var(--bg-primary);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:'JetBrains Mono',monospace;font-size:0.65rem;color:var(--text-secondary);overflow-x:auto;line-height:1.7;max-height:180px;overflow-y:auto"></pre>
+      <pre id="csv-preview" style="background:var(--bg-primary);border:1px solid var(--border);border-radius:8px;padding:1rem;font-family:Inter,monospace;font-size:0.65rem;color:var(--text-secondary);overflow-x:auto;line-height:1.7;max-height:180px;overflow-y:auto"></pre>
     </div>
 
     <div class="analysis-summary">
@@ -1525,7 +1558,7 @@ function initAnalysisDemo() {
       <div class="summary-row"><span class="summary-label">Correlation</span><span class="summary-value positive">r=0.94 between AI adoption score and revenue/employee</span></div>
     </div>
 
-    <div style="margin-top:1rem;padding:0.6rem 0.85rem;background:rgba(123,97,255,0.04);border:1px solid rgba(123,97,255,0.12);border-radius:8px;font-size:0.68rem;color:var(--text-secondary);line-height:1.6">
+    <div style="margin-top:1rem;padding:0.6rem 0.85rem;background:rgba(76,150,114,0.04);border:1px solid rgba(76,150,114,0.12);border-radius:8px;font-size:0.68rem;color:var(--text-secondary);line-height:1.6">
       <strong style="color:var(--accent2);font-size:0.65rem;text-transform:uppercase;letter-spacing:1px">Data Source &amp; Methodology</strong>
       &nbsp;— Monthly data from Jan–Dec 2025, modeled after Eurostat Digital Economy Statistics 2024 (Table isoc_if_ssa_rg_ai), European Commission AI Adoption Report Q1 2025, and OECD Digital Economy Outlook. AI adoption scores: composite index (0–100) based on AI tool usage, automation level, and workforce AI training. Revenue per employee: annualized. Automation rate: percentage of repeatable processes automated. Data incidents: reported security/privacy incidents per month. All values synthesized from public benchmarks for demonstration.
     </div>
@@ -1558,11 +1591,11 @@ function initAnalysisDemo() {
 
     // Calculate sector averages from CSV data
     const sectors = [
-      { name: 'Financial\nServices', avg: 82, color: '#00d4ff' },
-      { name: 'Technology', avg: 91, color: '#00ff88' },
-      { name: 'Manufactur-\ning', avg: 71, color: '#7b61ff' },
-      { name: 'Health-\ncare', avg: 57, color: '#ffbd2e' },
-      { name: 'Public\nSector', avg: 45, color: '#ff6b6b' }
+      { name: 'Financial\nServices', avg: 82, color: '#4C9672' },
+      { name: 'Technology', avg: 91, color: '#8BB8D2' },
+      { name: 'Manufactur-\ning', avg: 71, color: '#FF5E00' },
+      { name: 'Health-\ncare', avg: 57, color: '#E6A800' },
+      { name: 'Public\nSector', avg: 45, color: '#C0392B' }
     ];
 
     const barW = W / (sectors.length + 1);
@@ -1619,34 +1652,34 @@ function initAnalysisDemo() {
 
     // Data points: [ai_score, revenue_1000s]
     const points = [
-      { score: 68, rev: 142, sector: 'Manufacturing', color: '#7b61ff' },
-      { score: 71, rev: 148, sector: 'Manufacturing', color: '#7b61ff' },
-      { score: 85, rev: 197, sector: 'Financial', color: '#00d4ff' },
-      { score: 94, rev: 225, sector: 'Technology', color: '#00ff88' },
-      { score: 48, rev: 104, sector: 'Public', color: '#ff6b6b' },
-      { score: 60, rev: 161, sector: 'Healthcare', color: '#ffbd2e' }
+      { score: 68, rev: 142, sector: 'Manufacturing', color: '#FF5E00' },
+      { score: 71, rev: 148, sector: 'Manufacturing', color: '#FF5E00' },
+      { score: 85, rev: 197, sector: 'Financial', color: '#4C9672' },
+      { score: 94, rev: 225, sector: 'Technology', color: '#8BB8D2' },
+      { score: 48, rev: 104, sector: 'Public', color: '#C0392B' },
+      { score: 60, rev: 161, sector: 'Healthcare', color: '#E6A800' }
     ];
 
     const pad = { left: 45, right: 15, top: 15, bottom: 35 };
     const cw = W - pad.left - pad.right;
     const ch = H - pad.top - pad.bottom;
 
-    // Grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-    for (let i = 0; i <= 4; i++) {
-      const y = pad.top + (ch * i / 4);
-      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
-      ctx.fillStyle = 'rgba(255,255,255,0.2)';
-      ctx.font = '8px JetBrains Mono';
-      ctx.textAlign = 'right';
-      ctx.fillText(Math.round(100 + 125 * (4 - i) / 4) + 'k', pad.left - 4, y + 3);
-    }
+   // Grid (light theme)
+     ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+     for (let i = 0; i <= 4; i++) {
+       const y = pad.top + (ch * i / 4);
+       ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+       ctx.fillStyle = 'rgba(0,0,0,0.35)';
+       ctx.font = '8px Inter';
+       ctx.textAlign = 'right';
+       ctx.fillText(Math.round(100 + 125 * (4 - i) / 4) + 'k', pad.left - 4, y + 3);
+     }
 
-    // Axis labels
-    ctx.fillStyle = 'rgba(255,255,255,0.25)';
-    ctx.font = '8px Inter';
-    ctx.textAlign = 'center';
-    ctx.fillText('AI Adoption Score', pad.left + cw / 2, H - 3);
+     // Axis labels
+     ctx.fillStyle = 'rgba(0,0,0,0.4)';
+     ctx.font = '8px Inter';
+     ctx.textAlign = 'center';
+     ctx.fillText('AI Adoption Score', pad.left + cw / 2, H - 3);
     ctx.save();
     ctx.translate(10, pad.top + ch / 2);
     ctx.rotate(-Math.PI / 2);
@@ -1654,37 +1687,37 @@ function initAnalysisDemo() {
     ctx.restore();
 
     // Regression line (approximate: rev = 1.2 * score + 20)
-    ctx.strokeStyle = 'rgba(0,212,255,0.3)';
-    ctx.lineWidth = 1;
-    ctx.setLineDash([4, 3]);
-    const lineY1 = pad.top + ch - ((1.2 * 40 + 20 - 100) / 125) * ch;
-    const lineY2 = pad.top + ch - ((1.2 * 100 + 20 - 100) / 125) * ch;
-    ctx.beginPath();
-    ctx.moveTo(pad.left, lineY1);
-    ctx.lineTo(W - pad.right, lineY2);
-    ctx.stroke();
-    ctx.setLineDash([]);
+     ctx.strokeStyle = 'rgba(76,150,114,0.3)';
+     ctx.lineWidth = 1;
+     ctx.setLineDash([4, 3]);
+     const lineY1 = pad.top + ch - ((1.2 * 40 + 20 - 100) / 125) * ch;
+     const lineY2 = pad.top + ch - ((1.2 * 100 + 20 - 100) / 125) * ch;
+     ctx.beginPath();
+     ctx.moveTo(pad.left, lineY1);
+     ctx.lineTo(W - pad.right, lineY2);
+     ctx.stroke();
+     ctx.setLineDash([]);
 
-    // Points
-    points.forEach(p => {
-      const x = pad.left + ((p.score - 40) / 60) * cw;
-      const y = pad.top + ch - ((p.rev - 100) / 125) * ch;
+     // Points
+     points.forEach(p => {
+       const x = pad.left + ((p.score - 40) / 60) * cw;
+       const y = pad.top + ch - ((p.rev - 100) / 125) * ch;
 
-      // Glow
-      ctx.beginPath();
-      ctx.arc(x, y, 8, 0, Math.PI * 2);
-      ctx.fillStyle = p.color + '22';
-      ctx.fill();
+       // Glow
+       ctx.beginPath();
+       ctx.arc(x, y, 8, 0, Math.PI * 2);
+       ctx.fillStyle = p.color + '33';
+       ctx.fill();
 
-      // Dot
-      ctx.beginPath();
-      ctx.arc(x, y, 4, 0, Math.PI * 2);
-      ctx.fillStyle = p.color;
-      ctx.fill();
-      ctx.strokeStyle = '#06080f';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
-    });
+       // Dot
+       ctx.beginPath();
+       ctx.arc(x, y, 4, 0, Math.PI * 2);
+       ctx.fillStyle = p.color;
+       ctx.fill();
+       ctx.strokeStyle = '#FFFFFF';
+       ctx.lineWidth = 1.5;
+       ctx.stroke();
+     });
   }
 
   function drawTrendChart() {
@@ -1697,26 +1730,21 @@ function initAnalysisDemo() {
     const W = canvas.width, H = canvas.height;
 
     // Manufacturing automation rate: 24, 26, 28, 30, 32, 35, 37, 39, 41, 43, 45, 47
-    const data = [24, 26, 28, 30, 32, 35, 37, 39, 41, 43, 45, 47];
-    const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
+   const data = [24, 26, 28, 30, 32, 35, 37, 39, 41, 43, 45, 47];
+     const months = ['J','F','M','A','M','J','J','A','S','O','N','D'];
 
-    const pad = { left: 40, right: 15, top: 15, bottom: 25 };
-    const cw = W - pad.left - pad.right;
-    const ch = H - pad.top - pad.bottom;
-    const maxVal = 55;
+     // Grid (light theme)
+     ctx.strokeStyle = 'rgba(0,0,0,0.06)';
+     for (let i = 0; i <= 4; i++) {
+       const y = pad.top + (ch * i / 4);
+       ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
+       ctx.fillStyle = 'rgba(0,0,0,0.35)';
+       ctx.font = '8px Inter';
+       ctx.textAlign = 'right';
+     ctx.fillText(Math.round(maxVal * (4 - i) / 4) + '%', pad.left - 4, y + 3);
+      }
 
-    // Grid
-    ctx.strokeStyle = 'rgba(255,255,255,0.04)';
-    for (let i = 0; i <= 4; i++) {
-      const y = pad.top + (ch * i / 4);
-      ctx.beginPath(); ctx.moveTo(pad.left, y); ctx.lineTo(W - pad.right, y); ctx.stroke();
-      ctx.fillStyle = 'rgba(255,255,255,0.2)';
-      ctx.font = '8px JetBrains Mono';
-      ctx.textAlign = 'right';
-      ctx.fillText(Math.round(maxVal * (4 - i) / 4) + '%', pad.left - 4, y + 3);
-    }
-
-    // Area + line
+     // Area + line
     const pts = data.map((v, i) => ({
       x: pad.left + (i / 11) * cw,
       y: pad.top + ch - (v / maxVal) * ch
@@ -1733,40 +1761,40 @@ function initAnalysisDemo() {
     }
     ctx.lineTo(pts[pts.length - 1].x, H - pad.bottom);
     ctx.closePath();
-    const grad = ctx.createLinearGradient(0, pad.top, 0, H - pad.bottom);
-    grad.addColorStop(0, 'rgba(123,97,255,0.3)');
-    grad.addColorStop(1, 'rgba(123,97,255,0)');
-    ctx.fillStyle = grad;
-    ctx.fill();
+   const grad = ctx.createLinearGradient(0, pad.top, 0, H - pad.bottom);
+     grad.addColorStop(0, 'rgba(76,150,114,0.25)');
+     grad.addColorStop(1, 'rgba(76,150,114,0)');
+     ctx.fillStyle = grad;
+     ctx.fill();
 
-    // Line
-    ctx.beginPath();
-    ctx.moveTo(pts[0].x, pts[0].y);
-    for (let i = 1; i < pts.length; i++) {
-      const prev = pts[i - 1];
-      const cpx = (prev.x + pts[i].x) / 2;
-      ctx.bezierCurveTo(cpx, prev.y, cpx, pts[i].y, pts[i].x, pts[i].y);
-    }
-    ctx.strokeStyle = '#7b61ff';
-    ctx.lineWidth = 2;
-    ctx.stroke();
+     // Line
+     ctx.beginPath();
+     ctx.moveTo(pts[0].x, pts[0].y);
+     for (let i = 1; i < pts.length; i++) {
+       const prev = pts[i - 1];
+       const cpx = (prev.x + pts[i].x) / 2;
+       ctx.bezierCurveTo(cpx, prev.y, cpx, pts[i].y, pts[i].x, pts[i].y);
+     }
+     ctx.strokeStyle = '#4C9672';
+     ctx.lineWidth = 2;
+     ctx.stroke();
 
-    // Dots + labels
-    pts.forEach((p, i) => {
-      ctx.beginPath();
-      ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
-      ctx.fillStyle = '#0d1220';
-      ctx.fill();
-      ctx.strokeStyle = '#7b61ff';
-      ctx.lineWidth = 1.5;
-      ctx.stroke();
+     // Dots + labels
+     pts.forEach((p, i) => {
+       ctx.beginPath();
+       ctx.arc(p.x, p.y, 3, 0, Math.PI * 2);
+       ctx.fillStyle = '#FFFFFF';
+       ctx.fill();
+       ctx.strokeStyle = '#4C9672';
+       ctx.lineWidth = 1.5;
+       ctx.stroke();
 
-      ctx.fillStyle = 'rgba(255,255,255,0.3)';
-      ctx.font = '7px JetBrains Mono';
-      ctx.textAlign = 'center';
-      ctx.fillText(months[i], p.x, H - 6);
-      ctx.fillText(data[i] + '%', p.x, p.y - 8);
-    });
+       ctx.fillStyle = 'rgba(0,0,0,0.35)';
+       ctx.font = '7px Inter';
+       ctx.textAlign = 'center';
+       ctx.fillText(months[i], p.x, H - 6);
+       ctx.fillText(data[i] + '%', p.x, p.y - 8);
+     });
   }
 
   function drawIncidentChart() {
@@ -1778,14 +1806,14 @@ function initAnalysisDemo() {
     canvas.height = canvas.width * 0.6;
     const W = canvas.width, H = canvas.height;
 
-    // Total incidents per sector (sum of 3 months)
-    const sectors = [
-      { name: 'Tech', total: 0, color: '#00ff88' },
-      { name: 'Fin Svcs', total: 2, color: '#00d4ff' },
-      { name: 'Health', total: 12, color: '#ffbd2e' },
-      { name: 'Manufact.', total: 7, color: '#7b61ff' },
-      { name: 'Public', total: 17, color: '#ff6b6b' }
-    ];
+  // Total incidents per sector (sum of 3 months)
+     const sectors = [
+       { name: 'Tech', total: 0, color: '#4C9672' },
+       { name: 'Fin Svcs', total: 2, color: '#8BB8D2' },
+       { name: 'Health', total: 12, color: '#E6A800' },
+       { name: 'Manufact.', total: 7, color: '#FF5E00' },
+       { name: 'Public', total: 17, color: '#C0392B' }
+     ];
 
     const barH = 28;
     const gap = 12;
@@ -1794,34 +1822,34 @@ function initAnalysisDemo() {
     const labelW = 75;
 
     sectors.forEach((s, i) => {
-      const y = startY + i * (barH + gap);
-      const barW = (s.total / maxIncidents) * (W - labelW - 50);
+       const y = startY + i * (barH + gap);
+       const barW = (s.total / maxIncidents) * (W - labelW - 50);
 
-      // Label
-      ctx.fillStyle = 'rgba(255,255,255,0.5)';
-      ctx.font = 'bold 10px Inter';
-      ctx.textAlign = 'right';
-      ctx.fillText(s.name, labelW - 8, y + barH / 2 + 4);
+       // Label
+       ctx.fillStyle = 'rgba(0,0,0,0.5)';
+       ctx.font = 'bold 10px Inter';
+       ctx.textAlign = 'right';
+       ctx.fillText(s.name, labelW - 8, y + barH / 2 + 4);
 
-      // Bar background
-      ctx.fillStyle = 'rgba(255,255,255,0.03)';
-      ctx.fillRect(labelW, y, W - labelW - 50, barH);
+       // Bar background
+       ctx.fillStyle = 'rgba(0,0,0,0.04)';
+       ctx.fillRect(labelW, y, W - labelW - 50, barH);
 
-      // Bar fill
-      const grad = ctx.createLinearGradient(labelW, 0, labelW + barW, 0);
-      grad.addColorStop(0, s.color + '88');
-      grad.addColorStop(1, s.color);
-      ctx.fillStyle = grad;
+       // Bar fill
+       const grad = ctx.createLinearGradient(labelW, 0, labelW + barW, 0);
+       grad.addColorStop(0, s.color + '66');
+       grad.addColorStop(1, s.color);
+       ctx.fillStyle = grad;
       ctx.beginPath();
       const r = 4;
       ctx.roundRect(labelW, y, barW, barH, [0, r, r, 0]);
       ctx.fill();
 
       // Value
-      ctx.fillStyle = s.color;
-      ctx.font = 'bold 10px JetBrains Mono';
-      ctx.textAlign = 'left';
-      ctx.fillText(s.total + ' incidents', labelW + barW + 6, y + barH / 2 + 4);
+ctx.fillStyle = s.color;
+       ctx.font = 'bold 10px Inter';
+       ctx.textAlign = 'left';
+       ctx.fillText(s.total + ' incidents', labelW + barW + 6, y + barH / 2 + 4);
     });
   }
 }
@@ -1833,7 +1861,7 @@ function initPresentationDemo() {
   const slides = [
     {
       type: 'title',
-      gradient: '135deg,#06080f 0%,#0d1220 30%,#0a1628 100%',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 30%,#FFFFFF 100%',
       accent: 'var(--accent)',
       title: 'Meridian AI Systems',
       subtitle: 'Local AI Infrastructure & Enterprise Solutions (Demo / Fictional Company)',
@@ -1842,8 +1870,8 @@ function initPresentationDemo() {
     },
     {
       type: 'overview',
-      gradient: '135deg,#06080f 0%,#0a1020 50%,#0d0a1a 100%',
-      accent: '#00ff88',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 50%,#FFFFFF 100%',
+      accent: '#4C9672',
       title: 'What We Do',
       body: '<span class="gradient">Meridian AI Systems</span> designs, deploys, and manages <b>100% local AI infrastructure</b> for enterprises that need maximum data security. We set up enterprise-grade LLM hardware — either installed at your office or at our Nordic data center — and run AI agents that analyze your data without it ever leaving your control.',
       stats: [
@@ -1854,7 +1882,7 @@ function initPresentationDemo() {
     },
     {
       type: 'services',
-      gradient: '135deg,#0a0e1a 0%,#100a1e 50%,#0a1628 100%',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 50%,#FFFFFF 100%',
       accent: 'var(--accent)',
       title: 'Service Portfolio',
       columns: [
@@ -1871,14 +1899,14 @@ function initPresentationDemo() {
     },
     {
       type: 'comparison',
-      gradient: '135deg,#06080f 0%,#0a1a10 50%,#0a0e1a 100%',
-      accent: '#00d4ff',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 50%,#FFFFFF 100%',
+      accent: '#8BB8D2',
       title: 'Deployment Options',
       columns: [
         {
           title: 'On-Premise at Your Office',
           icon: '&#127970;',
-          color: '#00d4ff',
+          color: '#8BB8D2',
           features: [
             { text: 'Hardware installed at your site', check: true },
             { text: 'Complete network isolation', check: true },
@@ -1890,7 +1918,7 @@ function initPresentationDemo() {
         {
           title: 'Meridian\'s Data Center',
           icon: '&#9878;',
-          color: '#7b61ff',
+          color: '#FF5E00',
           features: [
             { text: 'Enterprise data center', check: true },
             { text: 'Redundant power & networking', check: true },
@@ -1903,33 +1931,33 @@ function initPresentationDemo() {
     },
     {
       type: 'security',
-      gradient: '135deg,#06080f 0%,#1a0a0a 50%,#0d0a1a 100%',
-      accent: '#00ff88',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 50%,#FFFFFF 100%',
+      accent: '#4C9672',
       title: 'Security Architecture',
       body: 'Multi-layered security designed for the most demanding compliance requirements. Every layer is independently verifiable.',
       layers: [
-        { name: 'Layer 1', title: 'Physical Isolation', desc: 'Air-gapped or private network. No internet-facing components.', color: '#00ff88' },
-        { name: 'Layer 2', title: 'Data Sovereignty', desc: 'Your data stays on hardware you control. GDPR, DORA, NIS2 compliant.', color: '#00d4ff' },
-        { name: 'Layer 3', title: 'Access Control', desc: 'Multi-factor auth, role-based access, full audit logging.', color: '#7b61ff' },
-        { name: 'Layer 4', title: 'Model Security', desc: 'Local-only inference. No API calls, no data exfiltration, no logging to external systems.', color: '#ffbd2e' }
+        { name: 'Layer 1', title: 'Physical Isolation', desc: 'Air-gapped or private network. No internet-facing components.', color: '#4C9672' },
+        { name: 'Layer 2', title: 'Data Sovereignty', desc: 'Your data stays on hardware you control. GDPR, DORA, NIS2 compliant.', color: '#8BB8D2' },
+        { name: 'Layer 3', title: 'Access Control', desc: 'Multi-factor auth, role-based access, full audit logging.', color: '#FF5E00' },
+        { name: 'Layer 4', title: 'Model Security', desc: 'Local-only inference. No API calls, no data exfiltration, no logging to external systems.', color: '#E6A800' }
       ]
     },
     {
       type: 'hardware',
-      gradient: '135deg,#0a0e1a 0%,#0d1220 50%,#100a1e 100%',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 50%,#FFFFFF 100%',
       accent: 'var(--accent)',
       title: 'Hardware Configurations',
       tiers: [
-        { name: 'Starter', gpu: '1× RTX 6000 Ada', memory: '96GB VRAM', model: '70B parameter', color: '#00d4ff' },
-        { name: 'Professional', gpu: '4× H100 80GB', memory: '320GB VRAM', model: '175B parameter (quantized)', color: '#00ff88' },
-        { name: 'Enterprise', gpu: '8× H100 SXM', memory: '640GB VRAM', model: 'Unlimited scale', color: '#7b61ff' }
+        { name: 'Starter', gpu: '1× RTX 6000 Ada', memory: '96GB VRAM', model: '70B parameter', color: '#8BB8D2' },
+        { name: 'Professional', gpu: '4× H100 80GB', memory: '320GB VRAM', model: '175B parameter (quantized)', color: '#4C9672' },
+        { name: 'Enterprise', gpu: '8× H100 SXM', memory: '640GB VRAM', model: 'Unlimited scale', color: '#FF5E00' }
       ],
       note: 'All configurations support vLLM, TGI, and custom inference runners'
     },
     {
       type: 'agent-platform',
-      gradient: '135deg,#06080f 0%,#0a0e20 50%,#100a1e 100%',
-      accent: 'var(--accent2)',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 50%,#FFFFFF 100%',
+      accent: '#FF5E00',
       title: 'Agent Platform',
       body: 'Built on OpenCode and Oh My OpenAgent — fully local agentic infrastructure.',
       capabilities: [
@@ -1943,7 +1971,7 @@ function initPresentationDemo() {
     },
     {
       type: 'chart',
-      gradient: '135deg,#06080f 0%,#0d1220 50%,#0a1020 100%',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 50%,#FFFFFF 100%',
       accent: 'var(--accent)',
       title: 'Revenue Growth 2025',
       subtitle: 'Monthly recurring revenue by deployment type (M€)',
@@ -1952,8 +1980,8 @@ function initPresentationDemo() {
     },
     {
       type: 'market',
-      gradient: '135deg,#0a0e1a 0%,#0a1628 50%,#0d0a1a 100%',
-      accent: '#00ff88',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 50%,#FFFFFF 100%',
+      accent: '#4C9672',
       title: 'Market Context',
       body: 'The local AI infrastructure market is experiencing explosive growth as enterprises prioritize data sovereignty.',
       marketStats: [
@@ -1965,7 +1993,7 @@ function initPresentationDemo() {
     },
     {
       type: 'testimonials',
-      gradient: '135deg,#06080f 0%,#100a1e 50%,#0a1628 100%',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 50%,#FFFFFF 100%',
       accent: 'var(--accent)',
       title: 'Client Success Stories',
       testimonials: [
@@ -1983,7 +2011,7 @@ function initPresentationDemo() {
     },
     {
       type: 'closing',
-      gradient: '135deg,#06080f 0%,#0d1220 30%,#0a1628 100%',
+      gradient: '135deg,#FFFFFF 0%,#F7F8F6 30%,#FFFFFF 100%',
       accent: 'var(--accent)',
       title: 'Secure AI. Local. Yours.',
       subtitle: 'Ready to deploy your own infrastructure?',
@@ -1999,9 +2027,9 @@ function initPresentationDemo() {
   const slidesHTML = slides.map((s, i) => {
     if (s.type === 'title') {
       return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
-        <div class="slide-decor-circle" style="width:350px;height:350px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(0,212,255,0.06)"></div>
-        <div class="slide-decor-circle" style="width:220px;height:220px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(123,97,255,0.06)"></div>
-        <div class="slide-decor-circle" style="width:120px;height:120px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(0,255,136,0.06)"></div>
+        <div class="slide-decor-circle" style="width:350px;height:350px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(76,150,114,0.08)"></div>
+        <div class="slide-decor-circle" style="width:220px;height:220px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(139,184,210,0.08)"></div>
+        <div class="slide-decor-circle" style="width:120px;height:120px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(255,94,0,0.08)"></div>
         <div style="font-size:0.6rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:3px;margin-bottom:1rem;position:relative;z-index:1">${s.year}</div>
         <h2 style="font-size:clamp(1.8rem,3.5vw,3rem)">${s.title}</h2>
         <p style="position:relative;z-index:1">${s.subtitle}</p>
@@ -2020,7 +2048,7 @@ function initPresentationDemo() {
       return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
         <h2>${s.title}</h2>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem;width:100%">
-          ${s.columns.map(col => `<div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:1rem">
+          ${s.columns.map(col => `<div style="background:rgba(0,0,0,0.03);border:1px solid var(--border);border-radius:8px;padding:1rem">
             <div style="font-size:1.5rem;margin-bottom:0.5rem">${col.icon}</div>
             <div style="font-size:clamp(0.7rem,1vw,0.9rem);font-weight:700;margin-bottom:0.5rem;color:var(--text-primary)">${col.title}</div>
             ${col.items.map(item => `<div style="font-size:clamp(0.5rem,0.8vw,0.75rem);color:var(--text-secondary);padding:0.2rem 0 0.2rem 1rem;position:relative">${item}</div>`).join('')}
@@ -2032,7 +2060,7 @@ function initPresentationDemo() {
       return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
         <h2>${s.title}</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;width:100%">
-          ${s.columns.map(col => `<div style="background:rgba(0,0,0,0.3);border:1px solid ${col.color}33;border-radius:8px;padding:1.25rem">
+          ${s.columns.map(col => `<div style="background:rgba(0,0,0,0.02);border:1px solid ${col.color}33;border-radius:8px;padding:1.25rem">
             <div style="font-size:1.3rem;margin-bottom:0.25rem">${col.icon} ${col.title}</div>
             <div style="width:100%;height:1px;background:${col.color}33;margin:0.75rem 0"></div>
             ${col.features.map(f => `<div style="font-size:clamp(0.55rem,0.85vw,0.8rem);color:var(--text-secondary);padding:0.3rem 0;display:flex;align-items:center;gap:0.4rem">
@@ -2048,7 +2076,7 @@ function initPresentationDemo() {
         <h2>${s.title}</h2>
         <p style="font-size:clamp(0.6rem,1vw,0.8rem);color:var(--text-secondary);margin-bottom:1.5rem;max-width:700px">${s.body}</p>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;width:100%">
-          ${s.layers.map(l => `<div style="background:rgba(0,0,0,0.3);border:1px solid ${l.color}33;border-radius:8px;padding:1rem">
+          ${s.layers.map(l => `<div style="background:rgba(0,0,0,0.02);border:1px solid ${l.color}33;border-radius:8px;padding:1rem">
             <div style="font-size:0.6rem;color:${l.color};font-weight:700;letter-spacing:1px;margin-bottom:0.25rem">${l.name}</div>
             <div style="font-size:clamp(0.7rem,1vw,0.9rem);font-weight:700;margin-bottom:0.25rem">${l.title}</div>
             <div style="font-size:clamp(0.5rem,0.75vw,0.7rem);color:var(--text-secondary)">${l.desc}</div>
@@ -2060,7 +2088,7 @@ function initPresentationDemo() {
       return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
         <h2>${s.title}</h2>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-top:1.5rem;width:100%">
-          ${s.tiers.map(t => `<div style="background:rgba(0,0,0,0.3);border:1px solid ${t.color}44;border-radius:8px;padding:1.25rem;text-align:center;position:relative">
+          ${s.tiers.map(t => `<div style="background:rgba(0,0,0,0.02);border:1px solid ${t.color}44;border-radius:8px;padding:1.25rem;text-align:center;position:relative">
             <div style="position:absolute;top:-8px;left:50%;transform:translateX(-50%);background:${t.color};color:#000;font-size:0.55rem;font-weight:800;padding:0.15rem 0.6rem;border-radius:50px;letter-spacing:1px">${t.name.toUpperCase()}</div>
             <div style="margin-top:0.75rem;font-size:clamp(0.65rem,1vw,0.85rem);color:${t.color};font-weight:700">${t.gpu}</div>
             <div style="margin-top:0.5rem;font-size:clamp(0.55rem,0.8vw,0.75rem);color:var(--text-secondary)">${t.memory}</div>
@@ -2075,7 +2103,7 @@ function initPresentationDemo() {
         <h2>${s.title}</h2>
         <p style="font-size:clamp(0.6rem,1vw,0.8rem);color:var(--text-secondary);margin-bottom:1.5rem">${s.body}</p>
         <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:0.75rem;width:100%">
-          ${s.capabilities.map(c => `<div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:0.85rem;text-align:center">
+          ${s.capabilities.map(c => `<div style="background:rgba(0,0,0,0.02);border:1px solid var(--border);border-radius:8px;padding:0.85rem;text-align:center">
             <div style="font-size:1.2rem;margin-bottom:0.25rem">${c.icon}</div>
             <div style="font-size:clamp(0.6rem,0.9vw,0.8rem);font-weight:700;margin-bottom:0.15rem">${c.title}</div>
             <div style="font-size:clamp(0.45rem,0.65vw,0.65rem);color:var(--text-secondary)">${c.desc}</div>
@@ -2108,7 +2136,7 @@ function initPresentationDemo() {
       return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
         <h2>${s.title}</h2>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-top:1.5rem;width:100%;max-height:65%">
-          ${s.testimonials.map(t => `<div style="background:rgba(0,0,0,0.3);border:1px solid var(--border);border-radius:8px;padding:1.25rem;display:flex;flex-direction:column">
+          ${s.testimonials.map(t => `<div style="background:rgba(0,0,0,0.03);border:1px solid var(--border);border-radius:8px;padding:1.25rem;display:flex;flex-direction:column">
             <div style="font-size:clamp(0.55rem,0.85vw,0.8rem);color:var(--text-secondary);line-height:1.6;font-style:italic;flex:1">"${t.quote}"</div>
             <div style="margin-top:0.75rem;padding-top:0.5rem;border-top:1px solid var(--border)">
               <div style="font-size:clamp(0.55rem,0.8vw,0.75rem);font-weight:700;color:var(--text-primary)">${t.author}</div>
@@ -2120,8 +2148,8 @@ function initPresentationDemo() {
     }
     if (s.type === 'closing') {
       return `<div class="slide slide-${i + 1} ${i === 0 ? 'active' : ''}">
-        <div class="slide-decor-circle" style="width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(0,212,255,0.06)"></div>
-        <div class="slide-decor-circle" style="width:200px;height:200px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(123,97,255,0.06)"></div>
+        <div class="slide-decor-circle" style="width:300px;height:300px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(76,150,114,0.08)"></div>
+        <div class="slide-decor-circle" style="width:200px;height:200px;top:50%;left:50%;transform:translate(-50%,-50%);border-color:rgba(139,184,210,0.08)"></div>
         <h2 style="position:relative;z-index:1">${s.title}</h2>
         <p style="position:relative;z-index:1">${s.subtitle}</p>
         <div style="position:relative;z-index:1;margin-top:1.25rem;padding:0.6rem 1.75rem;border:1px solid var(--accent);border-radius:8px;color:var(--accent);font-weight:600;font-size:clamp(0.7rem,1vw,0.95rem)">${s.cta}</div>
@@ -2250,60 +2278,60 @@ function drawSlideChart() {
     });
   }
 
-  // Grid
-  for (let i = 0; i <= 4; i++) {
-    const y = pad.top + (ch * i / 4);
-    const line = document.createElementNS(svgNS, 'line');
-    line.setAttribute('x1', pad.left); line.setAttribute('x2', w - pad.right);
-    line.setAttribute('y1', y); line.setAttribute('y2', y);
-    line.setAttribute('stroke', 'rgba(255,255,255,0.05)');
-    line.setAttribute('stroke-width', '1');
-    svg.appendChild(line);
+ // Grid (light theme)
+   for (let i = 0; i <= 4; i++) {
+     const y = pad.top + (ch * i / 4);
+     const line = document.createElementNS(svgNS, 'line');
+     line.setAttribute('x1', pad.left); line.setAttribute('x2', w - pad.right);
+     line.setAttribute('y1', y); line.setAttribute('y2', y);
+     line.setAttribute('stroke', 'rgba(0,0,0,0.06)');
+     line.setAttribute('stroke-width', '1');
+     svg.appendChild(line);
 
-    const text = document.createElementNS(svgNS, 'text');
-    text.setAttribute('x', pad.left - 5); text.setAttribute('y', y + 3);
-    text.setAttribute('text-anchor', 'end');
-    text.setAttribute('fill', 'rgba(255,255,255,0.25)');
-    text.setAttribute('font-size', '8');
-    text.setAttribute('font-family', 'JetBrains Mono');
-    text.textContent = Math.round(maxVal * (4 - i) / 4);
-    svg.appendChild(text);
-  }
+     const text = document.createElementNS(svgNS, 'text');
+     text.setAttribute('x', pad.left - 5); text.setAttribute('y', y + 3);
+     text.setAttribute('text-anchor', 'end');
+     text.setAttribute('fill', 'rgba(0,0,0,0.35)');
+     text.setAttribute('font-size', '8');
+     text.setAttribute('font-family', 'Inter');
+     text.textContent = Math.round(maxVal * (4 - i) / 4);
+     svg.appendChild(text);
+   }
 
-  // Labels
-  months.forEach((m, i) => {
-    const text = document.createElementNS(svgNS, 'text');
-    text.setAttribute('x', pad.left + i * groupW + groupW / 2);
-    text.setAttribute('y', h - 5);
-    text.setAttribute('text-anchor', 'middle');
-    text.setAttribute('fill', 'rgba(255,255,255,0.3)');
-    text.setAttribute('font-size', '7');
-    text.setAttribute('font-family', 'Inter');
-    text.textContent = m;
-    svg.appendChild(text);
-  });
+   // Labels
+   months.forEach((m, i) => {
+     const text = document.createElementNS(svgNS, 'text');
+     text.setAttribute('x', pad.left + i * groupW + groupW / 2);
+     text.setAttribute('y', h - 5);
+     text.setAttribute('text-anchor', 'middle');
+     text.setAttribute('fill', 'rgba(0,0,0,0.4)');
+     text.setAttribute('font-size', '7');
+     text.setAttribute('font-family', 'Inter');
+     text.textContent = m;
+     svg.appendChild(text);
+   });
 
-  makePath(onPrem, 0, '#00d4ff');
-  makePath(facility, 1, '#7b61ff');
+   makePath(onPrem, 0, '#4C9672');
+   makePath(facility, 1, '#8BB8D2');
 
-  // Legend
-  const legends = [{ label: 'On-Premise', color: '#00d4ff' }, { label: 'Meridian Facility (DEMO)', color: '#7b61ff' }];
-  legends.forEach((l, i) => {
-    const g = document.createElementNS(svgNS, 'g');
-    const rect = document.createElementNS(svgNS, 'rect');
-    rect.setAttribute('x', w - 200 + i * 110); rect.setAttribute('y', 5);
-    rect.setAttribute('width', 8); rect.setAttribute('height', 8); rect.setAttribute('rx', 2);
-    rect.setAttribute('fill', l.color);
-    g.appendChild(rect);
-    const text = document.createElementNS(svgNS, 'text');
-    text.setAttribute('x', w - 188 + i * 110); text.setAttribute('y', 13);
-    text.setAttribute('fill', 'rgba(255,255,255,0.5)');
-    text.setAttribute('font-size', '8');
-    text.setAttribute('font-family', 'Inter');
-    text.textContent = l.label;
-    g.appendChild(text);
-    svg.appendChild(g);
-  });
+   // Legend
+   const legends = [{ label: 'On-Premise', color: '#4C9672' }, { label: 'Meridian Facility (DEMO)', color: '#8BB8D2' }];
+   legends.forEach((l, i) => {
+     const g = document.createElementNS(svgNS, 'g');
+     const rect = document.createElementNS(svgNS, 'rect');
+     rect.setAttribute('x', w - 200 + i * 110); rect.setAttribute('y', 5);
+     rect.setAttribute('width', 8); rect.setAttribute('height', 8); rect.setAttribute('rx', 2);
+     rect.setAttribute('fill', l.color);
+     g.appendChild(rect);
+     const text = document.createElementNS(svgNS, 'text');
+     text.setAttribute('x', w - 188 + i * 110); text.setAttribute('y', 13);
+     text.setAttribute('fill', 'rgba(0,0,0,0.5)');
+     text.setAttribute('font-size', '8');
+     text.setAttribute('font-family', 'Inter');
+     text.textContent = l.label;
+     g.appendChild(text);
+     svg.appendChild(g);
+   });
 
   el.appendChild(svg);
 }
