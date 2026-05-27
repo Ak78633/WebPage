@@ -364,30 +364,7 @@
     .contact-item h4{font-size:0.95rem;font-weight:600;margin-bottom:0.25rem}
     .contact-item p,.contact-item a{color:var(--text-secondary);font-size:0.9rem;text-decoration:none;transition:color 0.3s}
     .contact-item a:hover{color:var(--accent)}
-    .contact-form{
-      background:var(--bg-card);border:1px solid var(--border);
-      border-radius:var(--radius-lg);padding:2.5rem;
-      box-shadow:0 1px 3px rgba(47,56,51,0.06);
-    }
-    .form-group{margin-bottom:1.25rem}
-    .form-group label{display:block;font-size:0.85rem;font-weight:500;margin-bottom:0.5rem;color:var(--text-secondary)}
-    .form-group input,.form-group textarea{
-      width:100%;padding:0.8rem 1rem;border-radius:8px;
-      background:var(--bg-secondary);border:1px solid var(--border);
-      color:var(--text-primary);font-family:inherit;font-size:0.9rem;
-      transition:border-color 0.3s;outline:none;
-    }
-    .form-group input:focus,.form-group textarea:focus{border-color:var(--accent)}
-    .form-group textarea{resize:vertical;min-height:120px}
-    .form-submit{
-      width:100%;padding:0.9rem;border-radius:50px;font-size:1rem;font-weight:600;
-      background:linear-gradient(135deg,var(--accent),#3A7A5B);
-      color:#FFFFFF;border:none;cursor:pointer;
-      transition:transform 0.3s,box-shadow 0.3s;
-    }
-    .form-submit:hover{transform:translateY(-2px);box-shadow:0 8px 30px var(--glow)}
-
-    /* ===== FOOTER ===== */
+      /* ===== FOOTER ===== */
     footer{
       padding:3rem 2rem;border-top:1px solid var(--border);
       text-align:center;
@@ -1032,27 +1009,6 @@
             </p>
           </div>
         </div>
-      </div>
-      <div class="contact-form reveal">
-        <form onsubmit="event.preventDefault();this.innerHTML='<div style=\'text-align:center;padding:3rem 0;\'><div style=\'font-size:2rem;margin-bottom:1rem;\'>&#10003;</div><h3 style=\'margin-bottom:0.5rem;\'>Message Sent</h3><p style=\'color:var(--text-secondary)\'>We\'ll get back to you within 24 hours.</div>'">
-          <div class="form-group">
-            <label for="name">Name</label>
-            <input type="text" id="name" placeholder="Your full name" required>
-          </div>
-          <div class="form-group">
-            <label for="email">Email</label>
-            <input type="email" id="email" placeholder="your@company.com" required>
-          </div>
-          <div class="form-group">
-            <label for="company">Company</label>
-            <input type="text" id="company" placeholder="Your company name">
-          </div>
-          <div class="form-group">
-            <label for="message">Message</label>
-            <textarea id="message" placeholder="Tell us about your AI infrastructure needs..." required></textarea>
-          </div>
-          <button type="submit" class="form-submit">Send Message</button>
-        </form>
       </div>
     </div>
     <div class="section-illustration contact-illustration reveal">
